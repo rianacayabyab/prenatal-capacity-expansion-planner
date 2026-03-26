@@ -1,0 +1,2514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Capacity Model — BTO Flavor Town</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: #f5f8fc;
+      color: #2f3d50;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 400;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    header {
+      background: linear-gradient(160deg, #eaf4fb 0%, #d6ecf7 60%, #cce6f5 100%);
+      text-align: center;
+      padding: 3rem 1rem 2.5rem;
+      border-bottom: 1px solid #b3d9ef;
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: "— small-batch. thoughtfully made. —";
+      position: absolute;
+      top: 14px;
+      left: 0;
+      right: 0;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: #29abe2;
+      opacity: 0.75;
+    }
+
+    .header-logo {
+      display: block;
+      margin: 0 auto 1.25rem;
+      height: 48px;
+      width: auto;
+    }
+
+    header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 700;
+      color: #2f3d50;
+      letter-spacing: -0.01em;
+      margin-bottom: 0.6rem;
+    }
+
+    header p.tagline {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 1.1rem;
+      color: #1e8bbf;
+      font-weight: 400;
+    }
+
+    /* Nav */
+    nav {
+      background: #2f3d50;
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+      padding: 1rem 1rem;
+      flex-wrap: wrap;
+    }
+
+    nav a {
+      color: #a8d8ef;
+      text-decoration: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    nav a:hover { color: #fff; }
+    nav a.active { color: #fff; border-bottom: 2px solid #29abe2; padding-bottom: 2px; }
+
+    /* Page layout */
+    .page {
+      max-width: 960px;
+      margin: 3rem auto 5rem;
+      padding: 0 1.5rem;
+    }
+
+    .page-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 600;
+      color: #2f3d50;
+      text-align: center;
+      margin-bottom: 0.4rem;
+    }
+
+    .page-sub {
+      text-align: center;
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #29abe2;
+      margin-bottom: 2.5rem;
+    }
+
+    /* Cards */
+    .card {
+      background: #fff;
+      border: 1px solid #c5e0f0;
+      border-radius: 14px;
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #2f3d50;
+      margin-bottom: 0.3rem;
+    }
+
+    .card-desc {
+      font-size: 0.85rem;
+      color: #6b7a8d;
+      margin-bottom: 1.5rem;
+      font-weight: 300;
+    }
+
+    /* Year blocks */
+    .year-blocks {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .year-block {
+      border: 1px solid #c5e0f0;
+      border-radius: 10px;
+      padding: 1.5rem;
+      background: #f9fcfe;
+      position: relative;
+    }
+
+    .year-block-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .year-block-header label {
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #2f3d50;
+      white-space: nowrap;
+    }
+
+    .year-input {
+      width: 100px;
+      padding: 0.45rem 0.75rem;
+      border: 1px solid #c5e0f0;
+      border-radius: 6px;
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #2f3d50;
+      background: #fff;
+      -moz-appearance: textfield;
+    }
+
+    .year-input::-webkit-outer-spin-button,
+    .year-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+    .year-input:focus {
+      outline: none;
+      border-color: #29abe2;
+    }
+
+    .btn-remove-year {
+      margin-left: auto;
+      background: none;
+      border: 1px solid #e0b0b0;
+      border-radius: 6px;
+      color: #c05050;
+      font-size: 0.75rem;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      padding: 0.3rem 0.75rem;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .btn-remove-year:hover {
+      background: #fdf0f0;
+      color: #a03030;
+    }
+
+    /* Quarter inputs grid */
+    .quarter-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+
+    @media (max-width: 560px) {
+      .quarter-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .input-group label {
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #2f3d50;
+    }
+
+    .input-group input[type="number"] {
+      width: 100%;
+      padding: 0.7rem 1rem;
+      border: 1px solid #c5e0f0;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      color: #2f3d50;
+      background: #fff;
+      transition: border-color 0.2s;
+      -moz-appearance: textfield;
+    }
+
+    .input-group input[type="number"]::-webkit-outer-spin-button,
+    .input-group input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+    .input-group input[type="number"]:focus {
+      outline: none;
+      border-color: #29abe2;
+      background: #fff;
+    }
+
+    /* Add year button */
+    .btn-add-year {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: none;
+      border: 1.5px dashed #29abe2;
+      border-radius: 10px;
+      color: #1e8bbf;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      padding: 0.85rem 1.5rem;
+      cursor: pointer;
+      width: 100%;
+      justify-content: center;
+      transition: background 0.2s;
+      margin-top: 0.25rem;
+    }
+
+    .btn-add-year:hover { background: #eaf4fb; }
+
+    /* Ratio sliders */
+    .ratio-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 520px) {
+      .ratio-grid { grid-template-columns: 1fr; }
+    }
+
+    .ratio-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .ratio-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    .ratio-label-row label {
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #2f3d50;
+    }
+
+    .ratio-value {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #29abe2;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: #c5e0f0;
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #29abe2;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover { background: #1e8bbf; }
+
+    .ratio-note {
+      font-size: 0.78rem;
+      color: #8a99ac;
+      font-style: italic;
+      margin-top: 0.25rem;
+    }
+
+    /* Site split */
+    .site-split-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .site-split-bars {
+      display: flex;
+      border-radius: 8px;
+      overflow: hidden;
+      height: 36px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+
+    .site-bar-uc {
+      background: #2f3d50;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: width 0.2s;
+      white-space: nowrap;
+      overflow: hidden;
+      min-width: 2rem;
+    }
+
+    .site-bar-atx {
+      background: #29abe2;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: width 0.2s;
+      white-space: nowrap;
+      overflow: hidden;
+      min-width: 2rem;
+    }
+
+    .site-split-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      color: #6b7a8d;
+    }
+
+    .site-split-labels span strong {
+      color: #2f3d50;
+    }
+
+    /* Results table */
+    .results-table-wrap { overflow-x: auto; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      min-width: 780px;
+    }
+
+    thead tr.thead-group { background: #1e2d3e; color: #fff; }
+    thead tr.thead-sub   { background: #2f3d50; color: #a8d8ef; }
+
+    thead th {
+      padding: 0.7rem 0.9rem;
+      text-align: left;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    thead th.group-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: #fff;
+      border-right: 2px solid #29abe2;
+    }
+
+    thead th.group-label:last-of-type { border-right: none; }
+
+    thead th.sub-col { border-right: 1px solid #3a4f66; }
+    thead th.sub-col-last { border-right: 2px solid #29abe2; }
+    thead th.sub-col-last-final { border-right: none; }
+
+    thead tr.thead-group th:first-child { border-radius: 8px 0 0 0; }
+    thead tr.thead-group th:last-child  { border-radius: 0 8px 0 0; }
+
+    tbody tr {
+      border-bottom: 1px solid #e8f0f8;
+      transition: background 0.15s;
+    }
+
+    tbody tr:hover { background: #f0f7fc; }
+
+    /* Year separator rows */
+    tbody tr.year-header-row td {
+      background: #eaf4fb;
+      color: #1e8bbf;
+      font-family: 'Playfair Display', serif;
+      font-weight: 600;
+      font-size: 0.95rem;
+      padding: 0.6rem 1.1rem;
+      border-bottom: 1px solid #c5e0f0;
+      letter-spacing: 0.05em;
+    }
+
+    tbody td {
+      padding: 0.75rem 0.9rem;
+      color: #2f3d50;
+      border-right: 1px solid #f0f5fa;
+    }
+
+    tbody td:first-child {
+      font-weight: 500;
+      color: #1e8bbf;
+      font-family: 'Playfair Display', serif;
+      padding-left: 1.8rem;
+    }
+
+    tbody td.site-divider { border-right: 2px solid #c5e0f0; }
+
+    .metric-highlight {
+      font-weight: 600;
+      color: #2f3d50;
+    }
+
+    /* Collapsible card */
+    .card-toggle-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .card-toggle-header:hover .card-title { color: #1e8bbf; }
+
+    .card-toggle-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .card-toggle-summary {
+      font-size: 0.8rem;
+      color: #29abe2;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 400;
+    }
+
+    .card-toggle-arrow {
+      font-size: 0.7rem;
+      color: #29abe2;
+      transition: transform 0.25s;
+    }
+
+    .card.collapsed .card-toggle-arrow { transform: rotate(-90deg); }
+
+    .card-collapsible-body {
+      overflow: hidden;
+      transition: max-height 0.3s ease, opacity 0.25s ease, margin-top 0.25s ease;
+      max-height: 400px;
+      opacity: 1;
+      margin-top: 1.5rem;
+    }
+
+    .card.collapsed .card-collapsible-body {
+      max-height: 0;
+      opacity: 0;
+      margin-top: 0;
+    }
+
+    /* Assay horizontal scroll */
+    .assay-scroll-hint {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.78rem;
+      color: #29abe2;
+      text-align: right;
+      margin-bottom: 0.5rem;
+      opacity: 0.8;
+      letter-spacing: 0.03em;
+    }
+
+    .assay-grid {
+      display: flex;
+      flex-direction: row;
+      gap: 1rem;
+      overflow-x: auto;
+      overflow-y: visible;
+      align-items: start;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* Styled scrollbar */
+    .assay-grid::-webkit-scrollbar {
+      height: 6px;
+    }
+    .assay-grid::-webkit-scrollbar-track {
+      background: #eaf4fb;
+      border-radius: 3px;
+    }
+    .assay-grid::-webkit-scrollbar-thumb {
+      background: #29abe2;
+      border-radius: 3px;
+    }
+    .assay-grid::-webkit-scrollbar-thumb:hover {
+      background: #1e8bbf;
+    }
+
+    .assay-col {
+      display: flex;
+      flex-direction: column;
+      min-width: 280px;
+      flex-shrink: 0;
+      scroll-snap-align: start;
+    }
+
+    .assay-col .card {
+      margin-bottom: 0;
+      border-radius: 0;
+      border-bottom: none;
+    }
+
+    .assay-col .card:first-child { border-radius: 14px 14px 0 0; }
+    .assay-col .card:last-child  { border-radius: 0 0 14px 14px; border-bottom: 1px solid #c5e0f0; }
+
+    /* Compact table for side-by-side assay cards */
+    table.assay-table {
+      min-width: 360px;
+      font-size: 0.78rem;
+    }
+
+    table.assay-table thead th { padding: 0.55rem 0.6rem; font-size: 0.65rem; }
+    table.assay-table tbody td { padding: 0.6rem 0.6rem; }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 2.5rem 1rem;
+      color: #8a99ac;
+      font-style: italic;
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 2.5rem 1rem;
+      background: #2f3d50;
+      color: #a8d8ef;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-top: 4rem;
+    }
+
+    /* Assay Parameters section toggle */
+    .assay-section-card {
+      background: #fff;
+      border: 1px solid #c5e0f0;
+      border-radius: 14px;
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+    }
+
+    .assay-section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 1.5rem;
+      cursor: pointer;
+      user-select: none;
+      border-bottom: 2px solid transparent;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .assay-section-header:hover {
+      background: #eaf4fb;
+      border-bottom-color: #29abe2;
+    }
+
+    .section-header-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #2f3d50;
+      letter-spacing: -0.01em;
+      margin-bottom: 0.2rem;
+    }
+
+    .section-header-sub {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.82rem;
+      color: #1e8bbf;
+      font-style: italic;
+    }
+
+    /* Export card */
+    .export-card {
+      background: linear-gradient(135deg, #f0f8ff 0%, #eaf4fb 100%);
+      border: 1.5px solid #29abe2;
+    }
+
+    .export-instructions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin: 1.25rem 0;
+    }
+
+    @media (max-width: 600px) {
+      .export-instructions { grid-template-columns: 1fr; }
+    }
+
+    .export-option {
+      background: #fff;
+      border: 1px solid #c5e0f0;
+      border-radius: 10px;
+      padding: 1rem 1.1rem;
+    }
+
+    .export-option-title {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #2f3d50;
+      margin-bottom: 0.6rem;
+    }
+
+    .export-steps {
+      font-size: 0.83rem;
+      color: #4a5c6e;
+      line-height: 1.8;
+      padding-left: 1.1rem;
+    }
+
+    .export-steps a {
+      color: #29abe2;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .export-steps a:hover { text-decoration: underline; }
+
+    .export-buttons {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-export {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.92rem;
+      font-weight: 600;
+      padding: 0.65rem 1.4rem;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+
+    .btn-export:active { transform: scale(0.97); }
+    .btn-export:hover  { opacity: 0.88; }
+
+    .btn-export-copy {
+      background: #29abe2;
+      color: #fff;
+    }
+
+    .btn-export-csv {
+      background: #2f3d50;
+      color: #fff;
+    }
+
+    .export-note {
+      font-size: 0.82rem;
+      margin-top: 0.75rem;
+      min-height: 1.2em;
+      font-style: italic;
+    }
+
+    /* Peak day value badge */
+    .peak-day-value {
+      background: #fff3cd;
+      color: #8a6500;
+      border: 1px solid #f0d060;
+      padding: 0.15rem 0.55rem;
+      border-radius: 20px;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    /* Wide table (same as main results, just named for clarity) */
+    .wide-table {
+      min-width: 800px;
+    }
+
+    .assay-section-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-shrink: 0;
+    }
+
+    .assay-section-arrow {
+      font-size: 0.75rem;
+      color: #29abe2;
+      transition: transform 0.3s ease;
+      display: inline-block;
+    }
+
+    .assay-section-arrow.open {
+      transform: rotate(180deg);
+    }
+
+    .assay-section-body {
+      max-height: 3000px;
+      opacity: 1;
+      overflow: hidden;
+      transition: max-height 0.45s ease, opacity 0.3s ease;
+      padding: 1.25rem 1rem 0.25rem;
+    }
+
+    .assay-section-body.collapsed {
+      max-height: 0;
+      opacity: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+
+    /* ── Section header (Assay Parameters banner) ───────────────── */
+    .section-header { margin-bottom: 0.25rem; }
+    .section-header-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #2f3d50;
+      margin-bottom: 0.2rem;
+    }
+    .section-header-sub {
+      font-size: 0.8rem;
+      color: #6b7a8d;
+      font-weight: 300;
+    }
+
+    /* ── Staffing Model ─────────────────────────────────────────── */
+    .shift-coverage-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-top: 1.25rem;
+    }
+    @media (max-width: 600px) { .shift-coverage-grid { grid-template-columns: 1fr; } }
+
+    .shift-coverage-site {
+      background: #f9fcfe;
+      border: 1px solid #c5e0f0;
+      border-radius: 10px;
+      padding: 1rem;
+    }
+    .shift-coverage-site-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #2f3d50;
+      margin-bottom: 0.6rem;
+    }
+    .shift-badge {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.3rem 0.55rem;
+      border-radius: 6px;
+      margin-bottom: 0.3rem;
+      font-size: 0.8rem;
+    }
+    .shift-badge.active   { background: #d6ecf7; }
+    .shift-badge.inactive { background: #f0f0f0; color: #bbb; }
+    .shift-badge-name  { font-weight: 500; }
+    .shift-badge-hours { font-size: 0.71rem; color: #6b7a8d; margin-left: 0.35rem; }
+    .shift-badge.inactive .shift-badge-hours { color: #ccc; }
+    .shift-badge-fte   { font-weight: 700; color: #29abe2; font-size: 0.82rem; flex-shrink: 0; }
+    .shift-badge.inactive .shift-badge-fte { color: #ccc; }
+    .shift-coverage-footer {
+      margin-top: 0.5rem;
+      font-size: 0.75rem;
+      color: #6b7a8d;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .shift-periods-pill {
+      background: #2f3d50;
+      color: #fff;
+      border-radius: 20px;
+      padding: 0.1rem 0.55rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+
+    /* FTE stepper inputs */
+    .staffing-fte-section { margin-bottom: 1.5rem; }
+    .staffing-fte-section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #2f3d50;
+      margin-bottom: 0.5rem;
+      padding-bottom: 0.3rem;
+      border-bottom: 1px solid #eaf4fb;
+    }
+    .staffing-step-header {
+      display: grid;
+      grid-template-columns: 1fr 90px 90px;
+      gap: 0.5rem 1rem;
+      margin-bottom: 0.35rem;
+    }
+    .staffing-step-row {
+      display: grid;
+      grid-template-columns: 1fr 90px 90px;
+      gap: 0.5rem 1rem;
+      align-items: center;
+      margin-bottom: 0.45rem;
+    }
+    .staffing-step-name { font-size: 0.84rem; color: #2f3d50; }
+    .staffing-site-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #6b7a8d;
+      text-align: center;
+    }
+    .fte-stepper {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      justify-content: center;
+    }
+    .fte-btn {
+      width: 22px; height: 22px;
+      border: 1px solid #c5e0f0;
+      border-radius: 5px;
+      background: #eaf4fb;
+      color: #2f3d50;
+      font-size: 0.85rem;
+      line-height: 1;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s;
+      flex-shrink: 0;
+    }
+    .fte-btn:hover { background: #29abe2; color: #fff; border-color: #29abe2; }
+    .fte-val {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #2f3d50;
+      min-width: 2rem;
+      text-align: center;
+    }
+
+    /* Staffing results table */
+    .staffing-results-wrap { overflow-x: auto; }
+    .staffing-results-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+    .staffing-results-table th {
+      padding: 0.5rem 0.7rem;
+      background: #f9fcfe;
+      font-weight: 600;
+      text-align: center;
+      border-bottom: 2px solid #c5e0f0;
+      white-space: nowrap;
+    }
+    .staffing-results-table th:first-child { text-align: left; }
+    .staffing-results-table td {
+      padding: 0.42rem 0.7rem;
+      text-align: center;
+      border-bottom: 1px solid #f0f5fa;
+    }
+    .staffing-results-table td:first-child { text-align: left; }
+    .staffing-assay-row td {
+      background: #eaf4fb;
+      font-family: 'Playfair Display', serif;
+      font-weight: 600;
+      color: #2f3d50;
+      font-size: 0.85rem;
+      padding: 0.35rem 0.7rem;
+    }
+    .fte-ok    { color: #1a8040; font-weight: 700; }
+    .fte-warn  { color: #c07000; font-weight: 700; }
+    .fte-alert { color: #c03030; font-weight: 700; }
+    .fte-site-divider { border-left: 2px solid #c5e0f0; }
+    .staffing-formula-note {
+      font-size: 0.78rem;
+      color: #8a99ac;
+      font-style: italic;
+      margin-top: 0.75rem;
+    }
+    .staffing-day-select {
+      width: 100%;
+      max-width: 260px;
+      padding: 0.55rem 0.75rem;
+      border: 1px solid #c5e0f0;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      color: #2f3d50;
+      background: #fff;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2329abe2' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.75rem center;
+      padding-right: 2.25rem;
+    }
+    .staffing-day-select:focus { outline: none; border-color: #29abe2; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <img src="logo.svg" alt="Billion To One" class="header-logo" />
+    <h1>Capacity Model</h1>
+    <p class="tagline">Projecting volume, one scoop at a time.</p>
+  </header>
+
+  <nav>
+    <a href="index.html">Our Flavors</a>
+    <a href="index.html#locations">Locations & Hours</a>
+    <a href="capacity.html" class="active">Capacity Model</a>
+  </nav>
+
+  <div class="page">
+
+    <h2 class="page-title">Volume Projections</h2>
+    <p class="page-sub">quarterly inputs → weekly outputs</p>
+
+    <!-- Input: Tests per quarter, by year -->
+    <div class="card">
+      <div class="card-title">Tests per Quarter</div>
+      <div class="card-desc">Enter your projected total test volume for each quarter. Add multiple years to compare side by side.</div>
+
+      <div class="year-blocks" id="year-blocks">
+        <!-- Year blocks rendered by JS -->
+      </div>
+
+      <button class="btn-add-year" onclick="addYear()">+ Add Another Year</button>
+    </div>
+
+    <!-- Input: Order ratios -->
+    <div class="card">
+      <div class="card-title">Test Order Ratios</div>
+      <div class="card-desc">Set the proportion of tests that are Carrier vs. Aneuploidy orders. Ratios are proportional — they don't need to sum to 100%.</div>
+      <div class="ratio-grid">
+        <div class="ratio-group">
+          <div class="ratio-label-row">
+            <label>Carrier Order Ratio (y)</label>
+            <span class="ratio-value" id="y-display">77%</span>
+          </div>
+          <input type="range" id="y-slider" min="0" max="100" value="77" oninput="updateRatioDisplay(); calculate();" />
+        </div>
+        <div class="ratio-group">
+          <div class="ratio-label-row">
+            <label>Aneuploidy Order Ratio (z)</label>
+            <span class="ratio-value" id="z-display">95%</span>
+          </div>
+          <input type="range" id="z-slider" min="0" max="100" value="95" oninput="updateRatioDisplay(); calculate();" />
+        </div>
+      </div>
+      <p class="ratio-note" id="ratio-note"></p>
+    </div>
+
+    <!-- Assay Parameters section toggle -->
+    <div class="assay-section-card">
+      <div class="assay-section-header" onclick="toggleAssaySection()">
+        <div>
+          <h3 class="section-header-title">Assay Parameters</h3>
+          <p class="section-header-sub">sg+ &nbsp;·&nbsp; SMA &nbsp;·&nbsp; Fragile X &nbsp;·&nbsp; MLPA</p>
+        </div>
+        <div class="assay-section-meta">
+          <span class="card-toggle-summary" id="assay-section-summary">Click to expand</span>
+          <span class="assay-section-arrow" id="assay-section-arrow">▼</span>
+        </div>
+      </div>
+
+      <div class="assay-section-body collapsed" id="assay-section-body">
+        <!-- Assay Parameters & Results — horizontal scroll -->
+        <p class="assay-scroll-hint">← scroll to see all assays →</p>
+        <div class="assay-grid">
+
+      <!-- sg+ column -->
+      <div class="assay-col">
+        <div class="card collapsed" id="sgp-params-card">
+          <div class="card-toggle-header" onclick="toggleSgpCard()">
+            <div class="card-title">sg+ Parameters</div>
+            <div class="card-toggle-meta">
+              <span class="card-toggle-summary" id="sgp-toggle-summary">Reflex 13% · Requeue 8%</span>
+              <span class="card-toggle-arrow">▼</span>
+            </div>
+          </div>
+          <div class="card-collapsible-body">
+            <p class="card-desc">sg+ reflexes from Carrier results.</p>
+            <div class="ratio-grid">
+              <div class="ratio-group">
+                <div class="ratio-label-row">
+                  <label>Reflex Rate</label>
+                  <span class="ratio-value" id="sgp-reflex-display">13%</span>
+                </div>
+                <input type="range" id="sgp-reflex-slider" min="0" max="100" value="13" oninput="updateSgpDisplay(); calculate();" />
+                <p class="ratio-note">% of Carrier/Wk</p>
+              </div>
+              <div class="ratio-group">
+                <div class="ratio-label-row">
+                  <label>Requeue Rate</label>
+                  <span class="ratio-value" id="sgp-repeat-display">8%</span>
+                </div>
+                <input type="range" id="sgp-repeat-slider" min="0" max="100" value="8" oninput="updateSgpDisplay(); calculate();" />
+                <p class="ratio-note">% of sg+ volume</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title" style="font-size:1rem; margin-bottom:0.75rem;">sg+ Weekly Volume</div>
+          <div class="results-table-wrap">
+            <div id="sgp-empty" class="empty-state" style="padding:1.5rem;">Enter volume above ↑</div>
+            <table id="sgp-table" class="assay-table" style="display:none;">
+              <thead>
+                <tr class="thead-group">
+                  <th rowspan="2">Qtr</th>
+                  <th class="group-label" colspan="2">Total</th>
+                  <th class="group-label" colspan="2">UC</th>
+                  <th class="group-label" colspan="2">ATX</th>
+                </tr>
+                <tr class="thead-sub">
+                  <th class="sub-col">sg+/Wk</th><th class="sub-col-last">Requeue</th>
+                  <th class="sub-col">sg+/Wk</th><th class="sub-col-last">Requeue</th>
+                  <th class="sub-col">sg+/Wk</th><th class="sub-col-last-final">Requeue</th>
+                </tr>
+              </thead>
+              <tbody id="sgp-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- SMA column -->
+      <div class="assay-col">
+        <div class="card collapsed" id="sma-params-card">
+          <div class="card-toggle-header" onclick="toggleSmaCard()">
+            <div class="card-title">SMA Parameters</div>
+            <div class="card-toggle-meta">
+              <span class="card-toggle-summary" id="sma-toggle-summary">Reflex 2% · Requeue 10%</span>
+              <span class="card-toggle-arrow">▼</span>
+            </div>
+          </div>
+          <div class="card-collapsible-body">
+            <p class="card-desc">SMA reflexes from Carrier results.</p>
+            <div class="ratio-grid">
+              <div class="ratio-group">
+                <div class="ratio-label-row">
+                  <label>Reflex Rate</label>
+                  <span class="ratio-value" id="sma-reflex-display">2%</span>
+                </div>
+                <input type="range" id="sma-reflex-slider" min="0" max="100" value="2" oninput="updateSmaDisplay(); calculate();" />
+                <p class="ratio-note">% of Carrier/Wk</p>
+              </div>
+              <div class="ratio-group">
+                <div class="ratio-label-row">
+                  <label>Requeue Rate</label>
+                  <span class="ratio-value" id="sma-repeat-display">10%</span>
+                </div>
+                <input type="range" id="sma-repeat-slider" min="0" max="100" value="10" oninput="updateSmaDisplay(); calculate();" />
+                <p class="ratio-note">% of SMA volume</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title" style="font-size:1rem; margin-bottom:0.75rem;">SMA Weekly Volume</div>
+          <div class="results-table-wrap">
+            <div id="sma-empty" class="empty-state" style="padding:1.5rem;">Enter volume above ↑</div>
+            <table id="sma-table" class="assay-table" style="display:none;">
+              <thead>
+                <tr class="thead-group">
+                  <th rowspan="2">Qtr</th>
+                  <th class="group-label" colspan="2">Total</th>
+                  <th class="group-label" colspan="2">UC</th>
+                  <th class="group-label" colspan="2">ATX</th>
+                </tr>
+                <tr class="thead-sub">
+                  <th class="sub-col">SMA/Wk</th><th class="sub-col-last">Requeue</th>
+                  <th class="sub-col">SMA/Wk</th><th class="sub-col-last">Requeue</th>
+                  <th class="sub-col">SMA/Wk</th><th class="sub-col-last-final">Requeue</th>
+                </tr>
+              </thead>
+              <tbody id="sma-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fragile X column -->
+      <div class="assay-col">
+        <div class="card collapsed" id="frax-params-card">
+          <div class="card-toggle-header" onclick="toggleFraxCard()">
+            <div class="card-title">Fragile X Parameters</div>
+            <div class="card-toggle-meta">
+              <span class="card-toggle-summary" id="frax-toggle-summary">Reflex 50% · Requeue 5%</span>
+              <span class="card-toggle-arrow">▼</span>
+            </div>
+          </div>
+          <div class="card-collapsible-body">
+            <p class="card-desc">Fragile X reflexes from Carrier results.</p>
+            <div class="ratio-grid">
+              <div class="ratio-group">
+                <div class="ratio-label-row">
+                  <label>Reflex Rate</label>
+                  <span class="ratio-value" id="frax-reflex-display">50%</span>
+                </div>
+                <input type="range" id="frax-reflex-slider" min="0" max="100" value="50" oninput="updateFraxDisplay(); calculate();" />
+                <p class="ratio-note">% of Carrier/Wk</p>
+              </div>
+              <div class="ratio-group">
+                <div class="ratio-label-row">
+                  <label>Requeue Rate</label>
+                  <span class="ratio-value" id="frax-repeat-display">5%</span>
+                </div>
+                <input type="range" id="frax-repeat-slider" min="0" max="100" value="5" oninput="updateFraxDisplay(); calculate();" />
+                <p class="ratio-note">% of Fragile X volume</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title" style="font-size:1rem; margin-bottom:0.75rem;">Fragile X Weekly Volume</div>
+          <div class="results-table-wrap">
+            <div id="frax-empty" class="empty-state" style="padding:1.5rem;">Enter volume above ↑</div>
+            <table id="frax-table" class="assay-table" style="display:none;">
+              <thead>
+                <tr class="thead-group">
+                  <th rowspan="2">Qtr</th>
+                  <th class="group-label" colspan="2">Total</th>
+                  <th class="group-label" colspan="2">UC</th>
+                  <th class="group-label" colspan="2">ATX</th>
+                </tr>
+                <tr class="thead-sub">
+                  <th class="sub-col">FX/Wk</th><th class="sub-col-last">Requeue</th>
+                  <th class="sub-col">FX/Wk</th><th class="sub-col-last">Requeue</th>
+                  <th class="sub-col">FX/Wk</th><th class="sub-col-last-final">Requeue</th>
+                </tr>
+              </thead>
+              <tbody id="frax-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- MLPA column -->
+      <div class="assay-col">
+        <div class="card collapsed" id="mlpa-params-card">
+          <div class="card-toggle-header" onclick="toggleMlpaCard()">
+            <div class="card-title">MLPA Parameters</div>
+            <div class="card-toggle-meta">
+              <span class="card-toggle-summary" id="mlpa-toggle-summary">Reflex 5% · Requeue 0%</span>
+              <span class="card-toggle-arrow">▼</span>
+            </div>
+          </div>
+          <div class="card-collapsible-body">
+            <p class="card-desc">MLPA reflexes from Carrier results.</p>
+            <div class="ratio-grid">
+              <div class="ratio-group">
+                <div class="ratio-label-row">
+                  <label>Reflex Rate</label>
+                  <span class="ratio-value" id="mlpa-reflex-display">5%</span>
+                </div>
+                <input type="range" id="mlpa-reflex-slider" min="0" max="100" value="5" oninput="updateMlpaDisplay(); calculate();" />
+                <p class="ratio-note">% of Carrier/Wk</p>
+              </div>
+              <div class="ratio-group">
+                <div class="ratio-label-row">
+                  <label>Requeue Rate</label>
+                  <span class="ratio-value" id="mlpa-repeat-display">0%</span>
+                </div>
+                <input type="range" id="mlpa-repeat-slider" min="0" max="100" value="0" oninput="updateMlpaDisplay(); calculate();" />
+                <p class="ratio-note">% of MLPA volume</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title" style="font-size:1rem; margin-bottom:0.75rem;">MLPA Weekly Volume</div>
+          <div class="results-table-wrap">
+            <div id="mlpa-empty" class="empty-state" style="padding:1.5rem;">Enter volume above ↑</div>
+            <table id="mlpa-table" class="assay-table" style="display:none;">
+              <thead>
+                <tr class="thead-group">
+                  <th rowspan="2">Qtr</th>
+                  <th class="group-label" colspan="2">Total</th>
+                  <th class="group-label" colspan="2">UC</th>
+                  <th class="group-label" colspan="2">ATX</th>
+                </tr>
+                <tr class="thead-sub">
+                  <th class="sub-col">MLPA/Wk</th><th class="sub-col-last">Requeue</th>
+                  <th class="sub-col">MLPA/Wk</th><th class="sub-col-last">Requeue</th>
+                  <th class="sub-col">MLPA/Wk</th><th class="sub-col-last-final">Requeue</th>
+                </tr>
+              </thead>
+              <tbody id="mlpa-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+        </div><!-- end assay-grid -->
+      </div><!-- end assay-section-body -->
+    </div><!-- end assay-section-card -->
+
+    <!-- Input: Site split -->
+    <div class="card">
+      <div class="card-title">Site Volume Split</div>
+      <div class="card-desc">Set what percentage of total weekly volume goes to each lab location. Drag the slider to adjust.</div>
+      <div class="site-split-wrap">
+        <div class="site-split-bars">
+          <div class="site-bar-uc"  id="bar-uc"  style="width:50%">UC <span id="bar-uc-pct">50%</span></div>
+          <div class="site-bar-atx" id="bar-atx" style="width:50%">ATX <span id="bar-atx-pct">50%</span></div>
+        </div>
+        <input type="range" id="site-slider" min="0" max="100" value="50" oninput="updateSiteSplit(); calculate();" />
+        <div class="site-split-labels">
+          <span>🌁 <strong>Union City, CA</strong> — <span id="uc-pct-label">50%</span></span>
+          <span><span id="atx-pct-label">50%</span> — <strong>Austin, TX</strong> 🤠</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div class="card">
+      <div class="card-title">Projected Weekly Volume</div>
+      <div class="card-desc">Tests per week = tests per quarter ÷ 13. Carrier and Aneuploidy are split by order ratios. Site columns apply the location split.</div>
+      <div class="results-table-wrap">
+        <div id="results-empty" class="empty-state">Enter volume above to see your projections ↑</div>
+        <table id="results-table" style="display:none;" class="wide-table">
+          <thead>
+            <tr class="thead-group">
+              <th rowspan="2">Quarter</th>
+              <th rowspan="2">Tests / Qtr</th>
+              <th class="group-label" colspan="3">Total</th>
+              <th class="group-label" colspan="3">🌁 Union City, CA</th>
+              <th class="group-label" colspan="3">🤠 Austin, TX</th>
+            </tr>
+            <tr class="thead-sub">
+              <th class="sub-col">Tests / Wk</th>
+              <th class="sub-col">Carrier / Wk</th>
+              <th class="sub-col-last">Aneup / Wk</th>
+              <th class="sub-col">Tests / Wk</th>
+              <th class="sub-col">Carrier / Wk</th>
+              <th class="sub-col-last">Aneup / Wk</th>
+              <th class="sub-col">Tests / Wk</th>
+              <th class="sub-col">Carrier / Wk</th>
+              <th class="sub-col-last-final">Aneup / Wk</th>
+            </tr>
+          </thead>
+          <tbody id="results-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+
+    <!-- Peak Receipt Day -->
+    <div class="card">
+      <div class="card-title">Peak Receipt Day</div>
+      <div class="card-desc">What percentage of weekly volume arrives on your highest-volume day? Adjust the slider to model your peak day load — typically Monday or the first business day after a weekend.</div>
+
+      <div class="ratio-grid">
+        <div class="ratio-group">
+          <div class="ratio-label-row">
+            <label>Peak Day % of Weekly Volume</label>
+            <span class="ratio-value peak-day-value" id="peak-display">25%</span>
+          </div>
+          <input type="range" id="peak-slider" min="1" max="100" value="25" oninput="updatePeakDisplay(); calculate();" />
+          <p class="ratio-note">e.g. 25% means 1 in 4 weekly tests land on the busiest day</p>
+        </div>
+      </div>
+
+      <div class="results-table-wrap" style="margin-top:1.25rem;">
+        <div id="peak-empty" class="empty-state">Enter volume above to see peak day projections ↑</div>
+        <table id="peak-table" style="display:none;" class="wide-table">
+          <thead>
+            <tr class="thead-group">
+              <th rowspan="2">Quarter</th>
+              <th rowspan="2">Tests / Qtr</th>
+              <th class="group-label" colspan="3">Total (Peak Day)</th>
+              <th class="group-label" colspan="3">🌁 Union City, CA</th>
+              <th class="group-label" colspan="3">🤠 Austin, TX</th>
+            </tr>
+            <tr class="thead-sub">
+              <th class="sub-col">Tests / Day</th>
+              <th class="sub-col">Carrier / Day</th>
+              <th class="sub-col-last">Aneup / Day</th>
+              <th class="sub-col">Tests / Day</th>
+              <th class="sub-col">Carrier / Day</th>
+              <th class="sub-col-last">Aneup / Day</th>
+              <th class="sub-col">Tests / Day</th>
+              <th class="sub-col">Carrier / Day</th>
+              <th class="sub-col-last-final">Aneup / Day</th>
+            </tr>
+          </thead>
+          <tbody id="peak-body"></tbody>
+        </table>
+      </div>
+
+      <!-- Peak Day Assay Breakdown -->
+      <div style="margin-top:2rem; border-top:1px solid #c5e0f0; padding-top:1.5rem;">
+        <div class="card-title" style="margin-bottom:0.25rem;">Peak Day Assay Breakdown</div>
+        <p class="card-desc" style="margin-bottom:1rem;">Per-assay volumes on the peak receipt day — each assay's weekly volume × your peak day %.</p>
+        <p class="assay-scroll-hint">← scroll to see all assays →</p>
+        <div class="assay-grid">
+
+          <!-- sg+ peak column -->
+          <div class="assay-col">
+            <div class="card" style="border-radius:14px 14px 0 0; border-bottom:none; margin-bottom:0;">
+              <div class="card-title" style="font-size:1rem; margin-bottom:0.75rem;">sg+ Peak Day</div>
+              <div class="results-table-wrap">
+                <div id="pk-sgp-empty" class="empty-state" style="padding:1.5rem;">Enter volume above ↑</div>
+                <table id="pk-sgp-table" class="assay-table" style="display:none;">
+                  <thead>
+                    <tr class="thead-group">
+                      <th rowspan="2">Qtr</th>
+                      <th class="group-label" colspan="2">Total</th>
+                      <th class="group-label" colspan="2">UC</th>
+                      <th class="group-label" colspan="2">ATX</th>
+                    </tr>
+                    <tr class="thead-sub">
+                      <th class="sub-col">sg+/Day</th><th class="sub-col-last">Requeue</th>
+                      <th class="sub-col">sg+/Day</th><th class="sub-col-last">Requeue</th>
+                      <th class="sub-col">sg+/Day</th><th class="sub-col-last-final">Requeue</th>
+                    </tr>
+                  </thead>
+                  <tbody id="pk-sgp-body"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- SMA peak column -->
+          <div class="assay-col">
+            <div class="card" style="border-radius:14px 14px 0 0; border-bottom:none; margin-bottom:0;">
+              <div class="card-title" style="font-size:1rem; margin-bottom:0.75rem;">SMA Peak Day</div>
+              <div class="results-table-wrap">
+                <div id="pk-sma-empty" class="empty-state" style="padding:1.5rem;">Enter volume above ↑</div>
+                <table id="pk-sma-table" class="assay-table" style="display:none;">
+                  <thead>
+                    <tr class="thead-group">
+                      <th rowspan="2">Qtr</th>
+                      <th class="group-label" colspan="2">Total</th>
+                      <th class="group-label" colspan="2">UC</th>
+                      <th class="group-label" colspan="2">ATX</th>
+                    </tr>
+                    <tr class="thead-sub">
+                      <th class="sub-col">SMA/Day</th><th class="sub-col-last">Requeue</th>
+                      <th class="sub-col">SMA/Day</th><th class="sub-col-last">Requeue</th>
+                      <th class="sub-col">SMA/Day</th><th class="sub-col-last-final">Requeue</th>
+                    </tr>
+                  </thead>
+                  <tbody id="pk-sma-body"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Fragile X peak column -->
+          <div class="assay-col">
+            <div class="card" style="border-radius:14px 14px 0 0; border-bottom:none; margin-bottom:0;">
+              <div class="card-title" style="font-size:1rem; margin-bottom:0.75rem;">Fragile X Peak Day</div>
+              <div class="results-table-wrap">
+                <div id="pk-frax-empty" class="empty-state" style="padding:1.5rem;">Enter volume above ↑</div>
+                <table id="pk-frax-table" class="assay-table" style="display:none;">
+                  <thead>
+                    <tr class="thead-group">
+                      <th rowspan="2">Qtr</th>
+                      <th class="group-label" colspan="2">Total</th>
+                      <th class="group-label" colspan="2">UC</th>
+                      <th class="group-label" colspan="2">ATX</th>
+                    </tr>
+                    <tr class="thead-sub">
+                      <th class="sub-col">FraX/Day</th><th class="sub-col-last">Requeue</th>
+                      <th class="sub-col">FraX/Day</th><th class="sub-col-last">Requeue</th>
+                      <th class="sub-col">FraX/Day</th><th class="sub-col-last-final">Requeue</th>
+                    </tr>
+                  </thead>
+                  <tbody id="pk-frax-body"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- MLPA peak column -->
+          <div class="assay-col">
+            <div class="card" style="border-radius:14px 14px 0 0; border-bottom:none; margin-bottom:0;">
+              <div class="card-title" style="font-size:1rem; margin-bottom:0.75rem;">MLPA Peak Day</div>
+              <div class="results-table-wrap">
+                <div id="pk-mlpa-empty" class="empty-state" style="padding:1.5rem;">Enter volume above ↑</div>
+                <table id="pk-mlpa-table" class="assay-table" style="display:none;">
+                  <thead>
+                    <tr class="thead-group">
+                      <th rowspan="2">Qtr</th>
+                      <th class="group-label" colspan="2">Total</th>
+                      <th class="group-label" colspan="2">UC</th>
+                      <th class="group-label" colspan="2">ATX</th>
+                    </tr>
+                    <tr class="thead-sub">
+                      <th class="sub-col">MLPA/Day</th><th class="sub-col-last">Requeue</th>
+                      <th class="sub-col">MLPA/Day</th><th class="sub-col-last">Requeue</th>
+                      <th class="sub-col">MLPA/Day</th><th class="sub-col-last-final">Requeue</th>
+                    </tr>
+                  </thead>
+                  <tbody id="pk-mlpa-body"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- end assay-grid -->
+      </div><!-- end peak assay breakdown -->
+    </div><!-- end peak card -->
+
+    <!-- Peak Day Staffing Model -->
+    <div class="assay-section-card">
+      <div class="assay-section-header" onclick="toggleStaffingSection()">
+        <div>
+          <h3 class="section-header-title">Peak Day Staffing Model</h3>
+          <p class="section-header-sub">Estimate FTEs needed per assay step · per shift · per site on your highest volume day</p>
+        </div>
+        <div class="assay-section-meta">
+          <span class="card-toggle-summary" id="staffing-section-summary">Click to expand</span>
+          <span class="assay-section-arrow" id="staffing-section-arrow">▼</span>
+        </div>
+      </div>
+
+      <div class="assay-section-body collapsed" id="staffing-section-body">
+
+        <!-- Day selector + Shift Coverage -->
+        <div class="card" style="margin: 1.25rem 0 0.75rem;">
+          <div class="card-title" style="margin-bottom:0.3rem;">Shift Coverage</div>
+          <div class="card-desc">Select your peak day of week — the model will show which shifts are active at each site and how many time periods the work is spread across.</div>
+          <div class="ratio-group" style="max-width:260px; margin-bottom:0;">
+            <div class="ratio-label-row" style="margin-bottom:0.5rem;">
+              <label>Peak Day of Week</label>
+            </div>
+            <select id="staffing-day-select" class="staffing-day-select" onchange="calculateStaffing()">
+              <option value="1">Monday</option>
+              <option value="2">Tuesday</option>
+              <option value="3">Wednesday</option>
+              <option value="4">Thursday</option>
+              <option value="5">Friday</option>
+              <option value="6">Saturday</option>
+              <option value="0">Sunday</option>
+            </select>
+          </div>
+          <div class="shift-coverage-grid" id="shift-coverage-grid">
+            <!-- rendered by calculateStaffing() -->
+          </div>
+        </div>
+
+        <!-- Current FTE Inputs (collapsible) -->
+        <div class="card collapsed" id="staffing-fte-card">
+          <div class="card-toggle-header" onclick="toggleStaffingFteCard()">
+            <div class="card-title">Current FTEs per Step</div>
+            <div class="card-toggle-meta">
+              <span class="card-toggle-summary" id="staffing-fte-summary">Pre-filled · click to adjust</span>
+              <span class="card-toggle-arrow">▼</span>
+            </div>
+          </div>
+          <div class="card-collapsible-body">
+            <p class="card-desc" style="margin-bottom:1.25rem;">UC is pre-filled with your current headcount per step per shift. ATX starts at 0 — set your planned FTEs to model hiring needs. Use 0.5 for CLA (half-FTE) roles.</p>
+            <div id="staffing-fte-inputs">
+              <!-- rendered by renderStaffingFteInputs() -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Staffing Results -->
+        <div class="card" style="margin-bottom:0;">
+          <div class="card-title">Projected FTEs Needed — Peak Day</div>
+          <p class="card-desc" id="staffing-results-desc" style="margin-bottom:1rem;">FTEs needed per shift period on peak day, by assay step and site.</p>
+          <div class="staffing-results-wrap">
+            <div id="staffing-results-empty" class="empty-state">Enter quarterly volume above and select a peak day ↑</div>
+            <table id="staffing-results-table" class="staffing-results-table" style="display:none;">
+              <thead>
+                <tr>
+                  <th rowspan="2" style="text-align:left; min-width:160px;">Assay / Step</th>
+                  <th class="group-label" colspan="3">🌁 Union City, CA</th>
+                  <th class="group-label fte-site-divider" colspan="3">🤠 Austin, TX</th>
+                </tr>
+                <tr class="thead-sub">
+                  <th>Current FTE</th>
+                  <th>Needed / Period</th>
+                  <th>Gap</th>
+                  <th class="fte-site-divider">Current FTE</th>
+                  <th>Needed / Period</th>
+                  <th>Gap</th>
+                </tr>
+              </thead>
+              <tbody id="staffing-results-body"></tbody>
+            </table>
+          </div>
+          <p class="staffing-formula-note">Formula: needed/period = current FTEs × (peak day % × 7 days) ÷ active shift periods · rounded up to nearest 0.5 FTE · gap = needed minus current (✓ = adequately staffed)</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Export -->
+    <div class="card export-card">
+      <div class="card-title">Export Data</div>
+      <div class="card-desc">Export all calculated tables to Google Sheets or a spreadsheet tool of your choice.</div>
+      <div class="export-instructions">
+        <div class="export-option">
+          <div class="export-option-title">📋 Paste into Google Sheets</div>
+          <ol class="export-steps">
+            <li>Click <strong>Copy to Clipboard</strong> below</li>
+            <li>Open <a href="https://sheets.new" target="_blank">sheets.new</a> to create a new sheet</li>
+            <li>Click cell <strong>A1</strong> and press <strong>⌘V</strong> (Mac) or <strong>Ctrl+V</strong> (Windows)</li>
+            <li>Done — data fills into columns automatically!</li>
+          </ol>
+        </div>
+        <div class="export-option">
+          <div class="export-option-title">⬇️ Download as CSV</div>
+          <ol class="export-steps">
+            <li>Click <strong>Download CSV</strong> below</li>
+            <li>In Google Sheets: <strong>File → Import → Upload</strong></li>
+            <li>Select the downloaded file and click <strong>Import data</strong></li>
+          </ol>
+        </div>
+      </div>
+      <div class="export-buttons">
+        <button class="btn-export btn-export-copy" onclick="exportCopy()" id="btn-copy">📋 Copy to Clipboard</button>
+        <button class="btn-export btn-export-csv"  onclick="exportCSV()">⬇️ Download CSV</button>
+      </div>
+      <p class="export-note" id="export-note"></p>
+    </div>
+
+  </div>
+
+  <footer>
+    <p>BTO Flavor Town &mdash; Life's too short for bad ice cream</p>
+  </footer>
+
+  <script>
+    var yearCounter = 0;
+    var years = []; // array of { id, year }
+
+    function addYear(yearValue) {
+      yearCounter++;
+      var id = 'yr' + yearCounter;
+      var defaultYear = yearValue || (new Date().getFullYear() + years.length);
+      years.push({ id: id, year: defaultYear });
+      renderYearBlocks();
+      calculate();
+    }
+
+    function removeYear(id) {
+      if (years.length <= 1) return; // always keep at least one
+      years = years.filter(function(y) { return y.id !== id; });
+      renderYearBlocks();
+      calculate();
+    }
+
+    function renderYearBlocks() {
+      var container = document.getElementById('year-blocks');
+      container.innerHTML = '';
+
+      years.forEach(function(yr) {
+        var block = document.createElement('div');
+        block.className = 'year-block';
+        block.id = 'block-' + yr.id;
+
+        var canRemove = years.length > 1;
+
+        block.innerHTML =
+          '<div class="year-block-header">' +
+            '<label>Year</label>' +
+            '<input type="number" class="year-input" id="year-label-' + yr.id + '" value="' + yr.year + '" ' +
+              'oninput="calculate()" />' +
+            (canRemove
+              ? '<button class="btn-remove-year" onclick="removeYear(\'' + yr.id + '\')">Remove</button>'
+              : '') +
+          '</div>' +
+          '<div class="quarter-grid">' +
+            ['Q1','Q2','Q3','Q4'].map(function(q, i) {
+              return '<div class="input-group">' +
+                '<label>' + q + '</label>' +
+                '<input type="number" id="' + yr.id + '-q' + (i+1) + '" min="0" placeholder="e.g. ' + (1300 + i*260) + '" oninput="calculate()" />' +
+              '</div>';
+            }).join('') +
+          '</div>';
+
+        container.appendChild(block);
+      });
+    }
+
+    function updateRatioDisplay() {
+      var y = parseInt(document.getElementById('y-slider').value);
+      var z = parseInt(document.getElementById('z-slider').value);
+      document.getElementById('y-display').textContent = y + '%';
+      document.getElementById('z-display').textContent = z + '%';
+
+      var sum = y + z;
+      var note = document.getElementById('ratio-note');
+      if (sum === 0) {
+        note.textContent = 'Both ratios are 0 — no tests will be allocated.';
+        note.style.color = '#e05c5c';
+      } else {
+        note.textContent = 'Carrier + Aneuploidy = ' + sum + '%' + (sum === 100 ? '' : ' (proportional allocation)');
+        note.style.color = '#8a99ac';
+      }
+    }
+
+    function toggleAssaySection() {
+      var body  = document.getElementById('assay-section-body');
+      var arrow = document.getElementById('assay-section-arrow');
+      var summary = document.getElementById('assay-section-summary');
+      var isCollapsed = body.classList.toggle('collapsed');
+      arrow.classList.toggle('open', !isCollapsed);
+      summary.textContent = isCollapsed ? 'Click to expand' : 'Click to collapse';
+    }
+
+    function toggleSgpCard() {
+      document.getElementById('sgp-params-card').classList.toggle('collapsed');
+    }
+
+    function toggleSmaCard() {
+      document.getElementById('sma-params-card').classList.toggle('collapsed');
+    }
+
+    function toggleFraxCard() {
+      document.getElementById('frax-params-card').classList.toggle('collapsed');
+    }
+
+    function updateFraxDisplay() {
+      var r = parseInt(document.getElementById('frax-reflex-slider').value);
+      var q = parseInt(document.getElementById('frax-repeat-slider').value);
+      document.getElementById('frax-reflex-display').textContent = r + '%';
+      document.getElementById('frax-repeat-display').textContent = q + '%';
+      document.getElementById('frax-toggle-summary').textContent = 'Reflex ' + r + '% · Requeue ' + q + '%';
+    }
+
+    function updateSmaDisplay() {
+      var r = parseInt(document.getElementById('sma-reflex-slider').value);
+      var q = parseInt(document.getElementById('sma-repeat-slider').value);
+      document.getElementById('sma-reflex-display').textContent = r + '%';
+      document.getElementById('sma-repeat-display').textContent = q + '%';
+      document.getElementById('sma-toggle-summary').textContent = 'Reflex ' + r + '% · Requeue ' + q + '%';
+    }
+
+    function toggleMlpaCard() {
+      document.getElementById('mlpa-params-card').classList.toggle('collapsed');
+    }
+
+    function updateMlpaDisplay() {
+      var r = parseInt(document.getElementById('mlpa-reflex-slider').value);
+      var q = parseInt(document.getElementById('mlpa-repeat-slider').value);
+      document.getElementById('mlpa-reflex-display').textContent = r + '%';
+      document.getElementById('mlpa-repeat-display').textContent = q + '%';
+      document.getElementById('mlpa-toggle-summary').textContent = 'Reflex ' + r + '% · Requeue ' + q + '%';
+    }
+
+    function updateSgpDisplay() {
+      var r = parseInt(document.getElementById('sgp-reflex-slider').value);
+      var q = parseInt(document.getElementById('sgp-repeat-slider').value);
+      document.getElementById('sgp-reflex-display').textContent = r + '%';
+      document.getElementById('sgp-repeat-display').textContent = q + '%';
+      document.getElementById('sgp-toggle-summary').textContent = 'Reflex ' + r + '% · Requeue ' + q + '%';
+    }
+
+    function updatePeakDisplay() {
+      var p = parseInt(document.getElementById('peak-slider').value);
+      document.getElementById('peak-display').textContent = p + '%';
+    }
+
+    function updateSiteSplit() {
+      var uc = parseInt(document.getElementById('site-slider').value);
+      var atx = 100 - uc;
+      document.getElementById('bar-uc').style.width  = uc  + '%';
+      document.getElementById('bar-atx').style.width = atx + '%';
+      document.getElementById('bar-uc-pct').textContent  = uc  + '%';
+      document.getElementById('bar-atx-pct').textContent = atx + '%';
+      document.getElementById('uc-pct-label').textContent  = uc  + '%';
+      document.getElementById('atx-pct-label').textContent = atx + '%';
+    }
+
+    function fmt(n) {
+      if (isNaN(n) || !isFinite(n)) return '—';
+      return Math.ceil(n).toLocaleString('en-US');
+    }
+
+    function cell(val, cls) {
+      return '<td' + (cls ? ' class="' + cls + '"' : '') + '>' + fmt(val) + '</td>';
+    }
+
+    function calculate() {
+      var y    = parseInt(document.getElementById('y-slider').value) / 100;
+      var z    = parseInt(document.getElementById('z-slider').value) / 100;
+      var yz   = y + z;
+      var uc   = parseInt(document.getElementById('site-slider').value) / 100;
+      var atx  = 1 - uc;
+      var peak = parseInt(document.getElementById('peak-slider').value) / 100;
+      var sgpReflex  = parseInt(document.getElementById('sgp-reflex-slider').value)  / 100;
+      var sgpRepeat  = parseInt(document.getElementById('sgp-repeat-slider').value)  / 100;
+      var smaReflex  = parseInt(document.getElementById('sma-reflex-slider').value)   / 100;
+      var smaRepeat  = parseInt(document.getElementById('sma-repeat-slider').value)   / 100;
+      var fraxReflex = parseInt(document.getElementById('frax-reflex-slider').value)  / 100;
+      var fraxRepeat = parseInt(document.getElementById('frax-repeat-slider').value)  / 100;
+      var mlpaReflex = parseInt(document.getElementById('mlpa-reflex-slider').value)  / 100;
+      var mlpaRepeat = parseInt(document.getElementById('mlpa-repeat-slider').value)  / 100;
+
+      var table     = document.getElementById('results-table');
+      var empty     = document.getElementById('results-empty');
+      var tbody     = document.getElementById('results-body');
+      var sgpTable  = document.getElementById('sgp-table');
+      var sgpEmpty  = document.getElementById('sgp-empty');
+      var sgpBody   = document.getElementById('sgp-body');
+      var smaTable  = document.getElementById('sma-table');
+      var smaEmpty  = document.getElementById('sma-empty');
+      var smaBody   = document.getElementById('sma-body');
+      var fraxTable = document.getElementById('frax-table');
+      var fraxEmpty = document.getElementById('frax-empty');
+      var fraxBody  = document.getElementById('frax-body');
+      var mlpaTable = document.getElementById('mlpa-table');
+      var mlpaEmpty = document.getElementById('mlpa-empty');
+      var mlpaBody  = document.getElementById('mlpa-body');
+      var peakTable   = document.getElementById('peak-table');
+      var peakEmpty   = document.getElementById('peak-empty');
+      var peakBody    = document.getElementById('peak-body');
+      var pkSgpTable  = document.getElementById('pk-sgp-table');
+      var pkSgpEmpty  = document.getElementById('pk-sgp-empty');
+      var pkSgpBody   = document.getElementById('pk-sgp-body');
+      var pkSmaTable  = document.getElementById('pk-sma-table');
+      var pkSmaEmpty  = document.getElementById('pk-sma-empty');
+      var pkSmaBody   = document.getElementById('pk-sma-body');
+      var pkFraxTable = document.getElementById('pk-frax-table');
+      var pkFraxEmpty = document.getElementById('pk-frax-empty');
+      var pkFraxBody  = document.getElementById('pk-frax-body');
+      var pkMlpaTable = document.getElementById('pk-mlpa-table');
+      var pkMlpaEmpty = document.getElementById('pk-mlpa-empty');
+      var pkMlpaBody  = document.getElementById('pk-mlpa-body');
+
+      var allRows = [];
+
+      years.forEach(function(yr) {
+        var yearLabel = document.getElementById('year-label-' + yr.id);
+        var label = yearLabel ? yearLabel.value : yr.year;
+        var quarters = [1,2,3,4].map(function(n) {
+          var el = document.getElementById(yr.id + '-q' + n);
+          return { label: 'Q' + n, val: el ? parseFloat(el.value) : NaN };
+        });
+        allRows.push({ yearLabel: label, quarters: quarters });
+      });
+
+      var hasAny = allRows.some(function(row) {
+        return row.quarters.some(function(q) { return !isNaN(q.val) && q.val > 0; });
+      });
+
+      if (!hasAny) {
+        table.style.display    = 'none';
+        empty.style.display    = 'block';
+        sgpTable.style.display = 'none';
+        sgpEmpty.style.display = 'block';
+        smaTable.style.display  = 'none';
+        smaEmpty.style.display  = 'block';
+        fraxTable.style.display = 'none';
+        fraxEmpty.style.display = 'block';
+        mlpaTable.style.display = 'none';
+        mlpaEmpty.style.display = 'block';
+        peakTable.style.display   = 'none'; peakEmpty.style.display   = 'block';
+        pkSgpTable.style.display  = 'none'; pkSgpEmpty.style.display  = 'block';
+        pkSmaTable.style.display  = 'none'; pkSmaEmpty.style.display  = 'block';
+        pkFraxTable.style.display = 'none'; pkFraxEmpty.style.display = 'block';
+        pkMlpaTable.style.display = 'none'; pkMlpaEmpty.style.display = 'block';
+        return;
+      }
+
+      table.style.display    = 'table';
+      empty.style.display    = 'none';
+      sgpTable.style.display = 'table';
+      sgpEmpty.style.display = 'none';
+      smaTable.style.display  = 'table';
+      smaEmpty.style.display  = 'none';
+      fraxTable.style.display = 'table';
+      fraxEmpty.style.display = 'none';
+      mlpaTable.style.display = 'table';
+      mlpaEmpty.style.display = 'none';
+      peakTable.style.display   = 'table'; peakEmpty.style.display   = 'none';
+      pkSgpTable.style.display  = 'table'; pkSgpEmpty.style.display  = 'none';
+      pkSmaTable.style.display  = 'table'; pkSmaEmpty.style.display  = 'none';
+      pkFraxTable.style.display = 'table'; pkFraxEmpty.style.display = 'none';
+      pkMlpaTable.style.display = 'table'; pkMlpaEmpty.style.display = 'none';
+      tbody.innerHTML    = '';
+      sgpBody.innerHTML  = '';
+      smaBody.innerHTML  = '';
+      fraxBody.innerHTML = '';
+      mlpaBody.innerHTML = '';
+      peakBody.innerHTML    = '';
+      pkSgpBody.innerHTML   = '';
+      pkSmaBody.innerHTML   = '';
+      pkFraxBody.innerHTML  = '';
+      pkMlpaBody.innerHTML  = '';
+
+      allRows.forEach(function(row) {
+        // Main table — year header (11 cols)
+        var yearRow = document.createElement('tr');
+        yearRow.className = 'year-header-row';
+        yearRow.innerHTML = '<td colspan="11">' + row.yearLabel + '</td>';
+        tbody.appendChild(yearRow);
+
+        // sg+ table — year header (7 cols)
+        var sgpYearRow = document.createElement('tr');
+        sgpYearRow.className = 'year-header-row';
+        sgpYearRow.innerHTML = '<td colspan="7">' + row.yearLabel + '</td>';
+        sgpBody.appendChild(sgpYearRow);
+
+        // SMA table — year header (7 cols)
+        var smaYearRow = document.createElement('tr');
+        smaYearRow.className = 'year-header-row';
+        smaYearRow.innerHTML = '<td colspan="7">' + row.yearLabel + '</td>';
+        smaBody.appendChild(smaYearRow);
+
+        // Fragile X table — year header (7 cols)
+        var fraxYearRow = document.createElement('tr');
+        fraxYearRow.className = 'year-header-row';
+        fraxYearRow.innerHTML = '<td colspan="7">' + row.yearLabel + '</td>';
+        fraxBody.appendChild(fraxYearRow);
+
+        // MLPA table — year header (7 cols)
+        var mlpaYearRow = document.createElement('tr');
+        mlpaYearRow.className = 'year-header-row';
+        mlpaYearRow.innerHTML = '<td colspan="7">' + row.yearLabel + '</td>';
+        mlpaBody.appendChild(mlpaYearRow);
+
+        // Peak day table — year header (11 cols)
+        var peakYearRow = document.createElement('tr');
+        peakYearRow.className = 'year-header-row';
+        peakYearRow.innerHTML = '<td colspan="11">' + row.yearLabel + '</td>';
+        peakBody.appendChild(peakYearRow);
+
+        // Peak assay tables — year headers (7 cols each)
+        [pkSgpBody, pkSmaBody, pkFraxBody, pkMlpaBody].forEach(function(b) {
+          var yr2 = document.createElement('tr');
+          yr2.className = 'year-header-row';
+          yr2.innerHTML = '<td colspan="7">' + row.yearLabel + '</td>';
+          b.appendChild(yr2);
+        });
+
+        row.quarters.forEach(function(q) {
+          // — Main table row —
+          var tr = document.createElement('tr');
+          if (isNaN(q.val) || q.val === 0) {
+            tr.innerHTML = '<td>' + q.label + '</td><td>—</td><td>—</td><td>—</td><td class="site-divider">—</td><td>—</td><td>—</td><td class="site-divider">—</td><td>—</td><td>—</td><td>—</td>';
+          } else {
+            var perWeek   = q.val / 13;
+            var carrier   = yz > 0 ? (perWeek / yz) * y : 0;
+            var aneup     = yz > 0 ? (perWeek / yz) * z : 0;
+            var ucTests   = perWeek * uc;   var ucCarrier  = carrier * uc;  var ucAneup  = aneup * uc;
+            var atxTests  = perWeek * atx;  var atxCarrier = carrier * atx; var atxAneup = aneup * atx;
+
+            tr.innerHTML =
+              '<td>' + q.label + '</td>' +
+              '<td class="metric-highlight">' + fmt(q.val) + '</td>' +
+              cell(perWeek, 'metric-highlight') + cell(carrier) +
+              '<td class="site-divider">' + fmt(aneup) + '</td>' +
+              cell(ucTests, 'metric-highlight') + cell(ucCarrier) +
+              '<td class="site-divider">' + fmt(ucAneup) + '</td>' +
+              cell(atxTests, 'metric-highlight') + cell(atxCarrier) + cell(atxAneup);
+          }
+          tbody.appendChild(tr);
+
+          // — sg+ table row —
+          var sgpTr = document.createElement('tr');
+          if (isNaN(q.val) || q.val === 0) {
+            sgpTr.innerHTML = '<td>' + q.label + '</td><td>—</td><td class="site-divider">—</td><td>—</td><td class="site-divider">—</td><td>—</td><td>—</td>';
+          } else {
+            var perWeek2  = q.val / 13;
+            var carrier2  = yz > 0 ? (perWeek2 / yz) * y : 0;
+            var sgpTotal  = carrier2 * sgpReflex;
+            var sgpReq    = sgpTotal * sgpRepeat;
+            var ucSgp     = sgpTotal * uc;   var ucSgpReq  = sgpReq * uc;
+            var atxSgp    = sgpTotal * atx;  var atxSgpReq = sgpReq * atx;
+
+            sgpTr.innerHTML =
+              '<td>' + q.label + '</td>' +
+              cell(sgpTotal, 'metric-highlight') +
+              '<td class="site-divider">' + fmt(sgpReq) + '</td>' +
+              cell(ucSgp, 'metric-highlight') +
+              '<td class="site-divider">' + fmt(ucSgpReq) + '</td>' +
+              cell(atxSgp, 'metric-highlight') +
+              cell(atxSgpReq);
+          }
+          sgpBody.appendChild(sgpTr);
+
+          // — SMA table row —
+          var smaTr = document.createElement('tr');
+          if (isNaN(q.val) || q.val === 0) {
+            smaTr.innerHTML = '<td>' + q.label + '</td><td>—</td><td class="site-divider">—</td><td>—</td><td class="site-divider">—</td><td>—</td><td>—</td>';
+          } else {
+            var perWeek3  = q.val / 13;
+            var carrier3  = yz > 0 ? (perWeek3 / yz) * y : 0;
+            var smaTotal  = carrier3 * smaReflex;
+            var smaReq    = smaTotal * smaRepeat;
+            var ucSma     = smaTotal * uc;   var ucSmaReq  = smaReq * uc;
+            var atxSma    = smaTotal * atx;  var atxSmaReq = smaReq * atx;
+
+            smaTr.innerHTML =
+              '<td>' + q.label + '</td>' +
+              cell(smaTotal, 'metric-highlight') +
+              '<td class="site-divider">' + fmt(smaReq) + '</td>' +
+              cell(ucSma, 'metric-highlight') +
+              '<td class="site-divider">' + fmt(ucSmaReq) + '</td>' +
+              cell(atxSma, 'metric-highlight') +
+              cell(atxSmaReq);
+          }
+          smaBody.appendChild(smaTr);
+
+          // — Fragile X table row —
+          var fraxTr = document.createElement('tr');
+          if (isNaN(q.val) || q.val === 0) {
+            fraxTr.innerHTML = '<td>' + q.label + '</td><td>—</td><td class="site-divider">—</td><td>—</td><td class="site-divider">—</td><td>—</td><td>—</td>';
+          } else {
+            var perWeek4   = q.val / 13;
+            var carrier4   = yz > 0 ? (perWeek4 / yz) * y : 0;
+            var fraxTotal  = carrier4 * fraxReflex;
+            var fraxReq    = fraxTotal * fraxRepeat;
+            var ucFrax     = fraxTotal * uc;   var ucFraxReq  = fraxReq * uc;
+            var atxFrax    = fraxTotal * atx;  var atxFraxReq = fraxReq * atx;
+
+            fraxTr.innerHTML =
+              '<td>' + q.label + '</td>' +
+              cell(fraxTotal, 'metric-highlight') +
+              '<td class="site-divider">' + fmt(fraxReq) + '</td>' +
+              cell(ucFrax, 'metric-highlight') +
+              '<td class="site-divider">' + fmt(ucFraxReq) + '</td>' +
+              cell(atxFrax, 'metric-highlight') +
+              cell(atxFraxReq);
+          }
+          fraxBody.appendChild(fraxTr);
+
+          // — MLPA table row —
+          var mlpaTr = document.createElement('tr');
+          if (isNaN(q.val) || q.val === 0) {
+            mlpaTr.innerHTML = '<td>' + q.label + '</td><td>—</td><td class="site-divider">—</td><td>—</td><td class="site-divider">—</td><td>—</td><td>—</td>';
+          } else {
+            var perWeek5   = q.val / 13;
+            var carrier5   = yz > 0 ? (perWeek5 / yz) * y : 0;
+            var mlpaTotal  = carrier5 * mlpaReflex;
+            var mlpaReq    = mlpaTotal * mlpaRepeat;
+            var ucMlpa     = mlpaTotal * uc;   var ucMlpaReq  = mlpaReq * uc;
+            var atxMlpa    = mlpaTotal * atx;  var atxMlpaReq = mlpaReq * atx;
+
+            mlpaTr.innerHTML =
+              '<td>' + q.label + '</td>' +
+              cell(mlpaTotal, 'metric-highlight') +
+              '<td class="site-divider">' + fmt(mlpaReq) + '</td>' +
+              cell(ucMlpa, 'metric-highlight') +
+              '<td class="site-divider">' + fmt(ucMlpaReq) + '</td>' +
+              cell(atxMlpa, 'metric-highlight') +
+              cell(atxMlpaReq);
+          }
+          mlpaBody.appendChild(mlpaTr);
+
+          // — Peak day table row —
+          var peakTr = document.createElement('tr');
+          if (isNaN(q.val) || q.val === 0) {
+            peakTr.innerHTML = '<td>' + q.label + '</td><td>—</td><td>—</td><td>—</td><td class="site-divider">—</td><td>—</td><td>—</td><td class="site-divider">—</td><td>—</td><td>—</td><td>—</td>';
+          } else {
+            var pkWeek     = q.val / 13;
+            var pkCarrier  = yz > 0 ? (pkWeek / yz) * y : 0;
+            var pkAneup    = yz > 0 ? (pkWeek / yz) * z : 0;
+            var pkDay      = pkWeek   * peak;
+            var pkCarDay   = pkCarrier * peak;
+            var pkAneupDay = pkAneup   * peak;
+            var pkUcDay    = pkDay     * uc;    var pkUcCar  = pkCarDay   * uc;  var pkUcAn  = pkAneupDay * uc;
+            var pkAtxDay   = pkDay     * atx;   var pkAtxCar = pkCarDay   * atx; var pkAtxAn = pkAneupDay * atx;
+
+            peakTr.innerHTML =
+              '<td>' + q.label + '</td>' +
+              '<td class="metric-highlight">' + fmt(q.val) + '</td>' +
+              cell(pkDay, 'metric-highlight') + cell(pkCarDay) +
+              '<td class="site-divider">' + fmt(pkAneupDay) + '</td>' +
+              cell(pkUcDay, 'metric-highlight') + cell(pkUcCar) +
+              '<td class="site-divider">' + fmt(pkUcAn) + '</td>' +
+              cell(pkAtxDay, 'metric-highlight') + cell(pkAtxCar) + cell(pkAtxAn);
+          }
+          peakBody.appendChild(peakTr);
+
+          // — Peak sg+ row —
+          var pkSgpTr = document.createElement('tr');
+          if (isNaN(q.val) || q.val === 0) {
+            pkSgpTr.innerHTML = '<td>' + q.label + '</td><td>—</td><td class="site-divider">—</td><td>—</td><td class="site-divider">—</td><td>—</td><td>—</td>';
+          } else {
+            var pw6      = q.val / 13;
+            var car6     = yz > 0 ? (pw6 / yz) * y : 0;
+            var sgpWk    = car6 * sgpReflex;
+            var sgpRqWk  = sgpWk * sgpRepeat;
+            var pkSgpD   = sgpWk  * peak;  var pkSgpRq  = sgpRqWk * peak;
+            var pkSgpUc  = pkSgpD * uc;    var pkSgpUcR = pkSgpRq * uc;
+            var pkSgpAtx = pkSgpD * atx;   var pkSgpAtR = pkSgpRq * atx;
+            pkSgpTr.innerHTML =
+              '<td>' + q.label + '</td>' +
+              cell(pkSgpD,  'metric-highlight') + '<td class="site-divider">' + fmt(pkSgpRq)  + '</td>' +
+              cell(pkSgpUc, 'metric-highlight') + '<td class="site-divider">' + fmt(pkSgpUcR) + '</td>' +
+              cell(pkSgpAtx,'metric-highlight') + cell(pkSgpAtR);
+          }
+          pkSgpBody.appendChild(pkSgpTr);
+
+          // — Peak SMA row —
+          var pkSmaTr = document.createElement('tr');
+          if (isNaN(q.val) || q.val === 0) {
+            pkSmaTr.innerHTML = '<td>' + q.label + '</td><td>—</td><td class="site-divider">—</td><td>—</td><td class="site-divider">—</td><td>—</td><td>—</td>';
+          } else {
+            var pw7      = q.val / 13;
+            var car7     = yz > 0 ? (pw7 / yz) * y : 0;
+            var smaWk    = car7 * smaReflex;
+            var smaRqWk  = smaWk * smaRepeat;
+            var pkSmaD   = smaWk  * peak;  var pkSmaRq  = smaRqWk * peak;
+            var pkSmaUc  = pkSmaD * uc;    var pkSmaUcR = pkSmaRq * uc;
+            var pkSmaAtx = pkSmaD * atx;   var pkSmaAtR = pkSmaRq * atx;
+            pkSmaTr.innerHTML =
+              '<td>' + q.label + '</td>' +
+              cell(pkSmaD,  'metric-highlight') + '<td class="site-divider">' + fmt(pkSmaRq)  + '</td>' +
+              cell(pkSmaUc, 'metric-highlight') + '<td class="site-divider">' + fmt(pkSmaUcR) + '</td>' +
+              cell(pkSmaAtx,'metric-highlight') + cell(pkSmaAtR);
+          }
+          pkSmaBody.appendChild(pkSmaTr);
+
+          // — Peak Fragile X row —
+          var pkFraxTr = document.createElement('tr');
+          if (isNaN(q.val) || q.val === 0) {
+            pkFraxTr.innerHTML = '<td>' + q.label + '</td><td>—</td><td class="site-divider">—</td><td>—</td><td class="site-divider">—</td><td>—</td><td>—</td>';
+          } else {
+            var pw8       = q.val / 13;
+            var car8      = yz > 0 ? (pw8 / yz) * y : 0;
+            var fraxWk    = car8 * fraxReflex;
+            var fraxRqWk  = fraxWk * fraxRepeat;
+            var pkFraxD   = fraxWk  * peak;  var pkFraxRq  = fraxRqWk * peak;
+            var pkFraxUc  = pkFraxD * uc;    var pkFraxUcR = pkFraxRq * uc;
+            var pkFraxAtx = pkFraxD * atx;   var pkFraxAtR = pkFraxRq * atx;
+            pkFraxTr.innerHTML =
+              '<td>' + q.label + '</td>' +
+              cell(pkFraxD,  'metric-highlight') + '<td class="site-divider">' + fmt(pkFraxRq)  + '</td>' +
+              cell(pkFraxUc, 'metric-highlight') + '<td class="site-divider">' + fmt(pkFraxUcR) + '</td>' +
+              cell(pkFraxAtx,'metric-highlight') + cell(pkFraxAtR);
+          }
+          pkFraxBody.appendChild(pkFraxTr);
+
+          // — Peak MLPA row —
+          var pkMlpaTr = document.createElement('tr');
+          if (isNaN(q.val) || q.val === 0) {
+            pkMlpaTr.innerHTML = '<td>' + q.label + '</td><td>—</td><td class="site-divider">—</td><td>—</td><td class="site-divider">—</td><td>—</td><td>—</td>';
+          } else {
+            var pw9       = q.val / 13;
+            var car9      = yz > 0 ? (pw9 / yz) * y : 0;
+            var mlpaWk    = car9 * mlpaReflex;
+            var mlpaRqWk  = mlpaWk * mlpaRepeat;
+            var pkMlpaD   = mlpaWk  * peak;  var pkMlpaRq  = mlpaRqWk * peak;
+            var pkMlpaUc  = pkMlpaD * uc;    var pkMlpaUcR = pkMlpaRq * uc;
+            var pkMlpaAtx = pkMlpaD * atx;   var pkMlpaAtR = pkMlpaRq * atx;
+            pkMlpaTr.innerHTML =
+              '<td>' + q.label + '</td>' +
+              cell(pkMlpaD,  'metric-highlight') + '<td class="site-divider">' + fmt(pkMlpaRq)  + '</td>' +
+              cell(pkMlpaUc, 'metric-highlight') + '<td class="site-divider">' + fmt(pkMlpaUcR) + '</td>' +
+              cell(pkMlpaAtx,'metric-highlight') + cell(pkMlpaAtR);
+          }
+          pkMlpaBody.appendChild(pkMlpaTr);
+        });
+      });
+
+      // Update staffing model whenever volume recalculates
+      if (document.getElementById('staffing-results-body')) calculateStaffing();
+    }
+
+    // ── Export helpers ──────────────────────────────────────────────
+
+    function tableToRows(tableId) {
+      var table = document.getElementById(tableId);
+      if (!table || table.style.display === 'none') return [];
+      var rows = [];
+      table.querySelectorAll('tr').forEach(function(tr) {
+        var cells = [];
+        tr.querySelectorAll('th, td').forEach(function(cell) {
+          // flatten colspan/rowspan by just reading textContent
+          cells.push('"' + cell.textContent.trim().replace(/"/g, '""') + '"');
+        });
+        rows.push(cells.join(','));
+      });
+      return rows;
+    }
+
+    function buildCSV() {
+      var sections = [
+        { label: 'Projected Weekly Volume',   id: 'results-table' },
+        { label: 'Peak Receipt Day',          id: 'peak-table'    },
+        { label: 'sg+ Weekly Volume',         id: 'sgp-table'     },
+        { label: 'SMA Weekly Volume',         id: 'sma-table'     },
+        { label: 'Fragile X Weekly Volume',   id: 'frax-table'    },
+        { label: 'MLPA Weekly Volume',        id: 'mlpa-table'    },
+        { label: 'sg+ Peak Day',              id: 'pk-sgp-table'  },
+        { label: 'SMA Peak Day',              id: 'pk-sma-table'  },
+        { label: 'Fragile X Peak Day',        id: 'pk-frax-table' },
+        { label: 'MLPA Peak Day',             id: 'pk-mlpa-table' },
+      ];
+
+      var peak = parseInt(document.getElementById('peak-slider').value);
+      var lines = ['"BTO Flavor Town — Capacity Model Export"'];
+      lines.push('"Generated: ' + new Date().toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' }) + '"');
+      lines.push('"Peak Day %: ' + peak + '%"');
+      lines.push('');
+
+      sections.forEach(function(s) {
+        var rows = tableToRows(s.id);
+        if (rows.length === 0) return;
+        lines.push('"' + s.label + '"');
+        rows.forEach(function(r) { lines.push(r); });
+        lines.push('');
+      });
+
+      return lines.join('\n');
+    }
+
+    function exportCSV() {
+      var csv = buildCSV();
+      if (!csv.trim()) {
+        document.getElementById('export-note').style.color = '#e05c5c';
+        document.getElementById('export-note').textContent = 'No data to export yet — enter your quarterly volumes first.';
+        return;
+      }
+      var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      var url  = URL.createObjectURL(blob);
+      var a    = document.createElement('a');
+      a.href     = url;
+      a.download = 'bto-capacity-model.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+      document.getElementById('export-note').style.color = '#2a8a4a';
+      document.getElementById('export-note').textContent = '✓ CSV downloaded! Import it into Google Sheets via File → Import.';
+    }
+
+    function exportCopy() {
+      var csv = buildCSV();
+      if (!csv.trim()) {
+        document.getElementById('export-note').style.color = '#e05c5c';
+        document.getElementById('export-note').textContent = 'No data to export yet — enter your quarterly volumes first.';
+        return;
+      }
+      // Convert CSV to TSV for cleaner paste into Google Sheets
+      var tsv = csv.split('\n').map(function(line) {
+        // parse CSV fields and re-join as tab-separated (strips quotes)
+        var fields = [];
+        var inQ = false, cur = '';
+        for (var i = 0; i < line.length; i++) {
+          var c = line[i];
+          if (c === '"') { inQ = !inQ; }
+          else if (c === ',' && !inQ) { fields.push(cur); cur = ''; }
+          else { cur += c; }
+        }
+        fields.push(cur);
+        return fields.join('\t');
+      }).join('\n');
+
+      navigator.clipboard.writeText(tsv).then(function() {
+        var btn = document.getElementById('btn-copy');
+        var note = document.getElementById('export-note');
+        btn.textContent = '✓ Copied!';
+        note.style.color = '#2a8a4a';
+        note.textContent = 'Paste into Google Sheets (⌘V or Ctrl+V) — data will fill into columns automatically.';
+        setTimeout(function() { btn.textContent = '📋 Copy to Clipboard'; }, 2500);
+      }).catch(function() {
+        document.getElementById('export-note').style.color = '#e05c5c';
+        document.getElementById('export-note').textContent = 'Could not access clipboard — try the Download CSV option instead.';
+      });
+    }
+
+    // ── Staffing Model ───────────────────────────────────────────────
+
+    // Day 0=Sun, 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat
+    // period: 'AM' = 7am-3:30pm, 'PM' = 3pm-11:30pm, 'ON' = overnight
+    var SHIFT_SCHEDULE = {
+      UC: [
+        { name: 'Tu–Sa AM',  hours: '7am–3:30pm',   days: [2,3,4,5,6], totalFte: 9,   period: 'AM' },
+        { name: 'Su–Th AM',  hours: '7am–3:30pm',   days: [0,1,2,3,4], totalFte: 8,   period: 'AM' },
+        { name: 'Mo–Fr AM',  hours: '7am–3:30pm',   days: [1,2,3,4,5], totalFte: 1,   period: 'AM' },
+        { name: 'Tu–Sa PM',  hours: '3pm–11:30pm',  days: [2,3,4,5,6], totalFte: 7,   period: 'PM' },
+        { name: 'Mo–Fr PM',  hours: '3pm–11:30pm',  days: [1,2,3,4,5], totalFte: 8.5, period: 'PM' },
+        { name: 'Overnight', hours: '10pm–8:30am',  days: [3,4,5,6],   totalFte: 3,   period: 'ON' }
+      ],
+      ATX: [
+        { name: 'Tu–Sa AM',  hours: '7am–3:30pm',   days: [2,3,4,5,6], totalFte: null, period: 'AM' },
+        { name: 'Su–Th AM',  hours: '7am–3:30pm',   days: [0,1,2,3,4], totalFte: null, period: 'AM' },
+        { name: 'Tu–Sa PM',  hours: '3pm–11:30pm',  days: [2,3,4,5,6], totalFte: null, period: 'PM' },
+        { name: 'Su–Th PM',  hours: '3pm–11:30pm',  days: [0,1,2,3,4], totalFte: null, period: 'PM' },
+        { name: 'Overnight', hours: '10pm–8:30am',  days: [3,4,5,6],   totalFte: null, period: 'ON', optional: true }
+      ]
+    };
+
+    // Assay steps with default FTEs (UC pre-filled, ATX starts at 0)
+    var STAFFING_ASSAYS = [
+      { assay: 'Carrier', steps: [
+        { name: 'Extraction',        id: 'car-ext',  ucFte: 1.5, atxFte: 0 },
+        { name: 'Pre Library Prep',  id: 'car-pre',  ucFte: 1.5, atxFte: 0 },
+        { name: 'Post Library Prep', id: 'car-post', ucFte: 1.5, atxFte: 0 },
+        { name: 'T7 Sequencing',     id: 'car-seq',  ucFte: 1,   atxFte: 0 }
+      ]},
+      { assay: 'Aneuploidy', steps: [
+        { name: 'Extraction',        id: 'an-ext',  ucFte: 1.5, atxFte: 0 },
+        { name: 'Pre Library Prep',  id: 'an-pre',  ucFte: 1,   atxFte: 0 },
+        { name: 'Post Library Prep', id: 'an-post', ucFte: 1.5, atxFte: 0 },
+        { name: 'T7 Sequencing',     id: 'an-seq',  ucFte: 1,   atxFte: 0 }
+      ]},
+      { assay: 'sg+', steps: [
+        { name: 'Extraction',        id: 'sgp-ext',  ucFte: 1,   atxFte: 0 },
+        { name: 'Pre Library Prep',  id: 'sgp-pre',  ucFte: 0.5, atxFte: 0 },
+        { name: 'Post Library Prep', id: 'sgp-post', ucFte: 0.5, atxFte: 0 },
+        { name: 'NextSeq 2000',      id: 'sgp-seq',  ucFte: 0.5, atxFte: 0 }
+      ]},
+      { assay: 'SMA', steps: [
+        { name: 'Extraction',        id: 'sma2-ext',  ucFte: 1,   atxFte: 0 },
+        { name: 'Pre Library Prep',  id: 'sma2-pre',  ucFte: 0.5, atxFte: 0 },
+        { name: 'Post Library Prep', id: 'sma2-post', ucFte: 0.5, atxFte: 0 },
+        { name: 'NextSeq 2000',      id: 'sma2-seq',  ucFte: 0.5, atxFte: 0 }
+      ]},
+      { assay: 'Fragile X', steps: [
+        { name: 'CGG Pre',  id: 'fx-cgg-pre',  ucFte: 1, atxFte: 0 },
+        { name: 'CGG Post', id: 'fx-cgg-post', ucFte: 1, atxFte: 0 },
+        { name: 'AGG Pre',  id: 'fx-agg-pre',  ucFte: 1, atxFte: 0 },
+        { name: 'AGG Post', id: 'fx-agg-post', ucFte: 1, atxFte: 0 }
+      ]},
+      { assay: 'MLPA', steps: [
+        { name: 'MLPA Pre',              id: 'ml-pre',  ucFte: 0.5, atxFte: 0 },
+        { name: 'MLPA Post & Sequencing',id: 'ml-post', ucFte: 0.5, atxFte: 0 }
+      ]}
+    ];
+
+    function fmtFte(n) {
+      if (n === Math.floor(n)) return n.toFixed(0);
+      return n.toFixed(1);
+    }
+
+    function ceilHalf(n) {
+      return Math.ceil(n * 2) / 2;
+    }
+
+    function countUniquePeriods(shifts) {
+      var seen = {};
+      shifts.forEach(function(s) { seen[s.period] = true; });
+      return Object.keys(seen).length;
+    }
+
+    function toggleStaffingSection() {
+      var body    = document.getElementById('staffing-section-body');
+      var arrow   = document.getElementById('staffing-section-arrow');
+      var summary = document.getElementById('staffing-section-summary');
+      var isCollapsed = body.classList.toggle('collapsed');
+      arrow.classList.toggle('open', !isCollapsed);
+      summary.textContent = isCollapsed ? 'Click to expand' : 'Click to collapse';
+      if (!isCollapsed) calculateStaffing();
+    }
+
+    function toggleStaffingFteCard() {
+      document.getElementById('staffing-fte-card').classList.toggle('collapsed');
+    }
+
+    function renderStaffingFteInputs() {
+      var container = document.getElementById('staffing-fte-inputs');
+      var html = '';
+      STAFFING_ASSAYS.forEach(function(a) {
+        html += '<div class="staffing-fte-section">';
+        html += '<div class="staffing-fte-section-title">' + a.assay + '</div>';
+        html += '<div class="staffing-step-header">';
+        html += '<div></div>';
+        html += '<div class="staffing-site-label">🌁 UC</div>';
+        html += '<div class="staffing-site-label">🤠 ATX</div>';
+        html += '</div>';
+        a.steps.forEach(function(step) {
+          html += '<div class="staffing-step-row">';
+          html += '<div class="staffing-step-name">' + step.name + '</div>';
+          // UC stepper
+          html += '<div class="fte-stepper">';
+          html += '<button type="button" class="fte-btn" onclick="adjustFte(\'' + step.id + '\',\'uc\',-0.5)">−</button>';
+          html += '<span class="fte-val" id="fte-uc-' + step.id + '-display">' + fmtFte(step.ucFte) + '</span>';
+          html += '<input type="hidden" id="fte-uc-' + step.id + '" value="' + step.ucFte + '">';
+          html += '<button type="button" class="fte-btn" onclick="adjustFte(\'' + step.id + '\',\'uc\',0.5)">+</button>';
+          html += '</div>';
+          // ATX stepper
+          html += '<div class="fte-stepper">';
+          html += '<button type="button" class="fte-btn" onclick="adjustFte(\'' + step.id + '\',\'atx\',-0.5)">−</button>';
+          html += '<span class="fte-val" id="fte-atx-' + step.id + '-display">' + fmtFte(step.atxFte) + '</span>';
+          html += '<input type="hidden" id="fte-atx-' + step.id + '" value="' + step.atxFte + '">';
+          html += '<button type="button" class="fte-btn" onclick="adjustFte(\'' + step.id + '\',\'atx\',0.5)">+</button>';
+          html += '</div>';
+          html += '</div>';
+        });
+        html += '</div>';
+      });
+      container.innerHTML = html;
+    }
+
+    function adjustFte(stepId, site, delta) {
+      var inputId   = 'fte-' + site + '-' + stepId;
+      var displayId = inputId + '-display';
+      var input     = document.getElementById(inputId);
+      var newVal    = Math.max(0, Math.round((parseFloat(input.value) + delta) * 2) / 2);
+      input.value   = newVal;
+      document.getElementById(displayId).textContent = fmtFte(newVal);
+      calculateStaffing();
+    }
+
+    function renderShiftCoverage(dayIdx, ucActive, atxActive, ucPeriods, atxPeriods) {
+      var grid = document.getElementById('shift-coverage-grid');
+      if (!grid) return;
+
+      function buildSiteHtml(site, allShifts, activeShifts, periods) {
+        var totalActiveFte = 0;
+        var html = '<div class="shift-coverage-site">';
+        html += '<div class="shift-coverage-site-title">' + (site === 'UC' ? '🌁 Union City, CA' : '🤠 Austin, TX') + '</div>';
+        allShifts.forEach(function(shift) {
+          var isActive = activeShifts.indexOf(shift) !== -1;
+          html += '<div class="shift-badge ' + (isActive ? 'active' : 'inactive') + '">';
+          html += '<span><span class="shift-badge-name">' + shift.name + '</span>';
+          html += '<span class="shift-badge-hours">' + shift.hours + '</span>';
+          if (shift.optional) html += '<span style="font-size:0.68rem;color:#8a99ac;margin-left:0.3rem;">(optional)</span>';
+          html += '</span>';
+          if (isActive) {
+            var fteStr = shift.totalFte !== null ? shift.totalFte + ' CLS' : 'TBD';
+            html += '<span class="shift-badge-fte">' + fteStr + '</span>';
+            if (shift.totalFte) totalActiveFte += shift.totalFte;
+          } else {
+            html += '<span class="shift-badge-fte">—</span>';
+          }
+          html += '</div>';
+        });
+        html += '<div class="shift-coverage-footer">';
+        html += '<span><span class="shift-periods-pill">' + periods + ' period' + (periods !== 1 ? 's' : '') + ' active</span></span>';
+        if (totalActiveFte > 0) html += '<span>~' + totalActiveFte + ' total CLS on floor</span>';
+        html += '</div>';
+        html += '</div>';
+        return html;
+      }
+
+      grid.innerHTML =
+        buildSiteHtml('UC',  SHIFT_SCHEDULE.UC,  ucActive,  ucPeriods)  +
+        buildSiteHtml('ATX', SHIFT_SCHEDULE.ATX, atxActive, atxPeriods);
+    }
+
+    function calculateStaffing() {
+      var dayIdx   = parseInt(document.getElementById('staffing-day-select').value);
+      var peak     = parseInt(document.getElementById('peak-slider').value) / 100;
+      var peakMult = peak * 7; // peak day volume ÷ average daily volume
+
+      // Active shifts for selected day
+      var ucActive  = SHIFT_SCHEDULE.UC.filter(function(s)  { return s.days.indexOf(dayIdx) !== -1; });
+      var atxActive = SHIFT_SCHEDULE.ATX.filter(function(s) { return s.days.indexOf(dayIdx) !== -1; });
+
+      // Count distinct time periods active (AM / PM / Overnight)
+      var ucPeriods  = countUniquePeriods(ucActive);
+      var atxPeriods = countUniquePeriods(atxActive);
+      // ATX overnight is optional — don't count it in base periods
+      var atxActiveBase = atxActive.filter(function(s) { return !s.optional; });
+      atxPeriods = countUniquePeriods(atxActiveBase);
+
+      renderShiftCoverage(dayIdx, ucActive, atxActive, ucPeriods, atxPeriods);
+
+      var hasVolume = document.getElementById('results-table') &&
+                      document.getElementById('results-table').style.display !== 'none';
+
+      var emptyEl  = document.getElementById('staffing-results-empty');
+      var tableEl  = document.getElementById('staffing-results-table');
+      var tbody    = document.getElementById('staffing-results-body');
+      if (!emptyEl || !tableEl || !tbody) return;
+
+      if (!hasVolume || ucPeriods === 0) {
+        emptyEl.style.display = 'block';
+        tableEl.style.display = 'none';
+        return;
+      }
+
+      emptyEl.style.display = 'none';
+      tableEl.style.display = 'table';
+      tbody.innerHTML = '';
+
+      var dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+      var desc = document.getElementById('staffing-results-desc');
+      if (desc) {
+        desc.textContent =
+          'Peak day: ' + dayNames[dayIdx] +
+          ' · ' + ucPeriods + ' UC shift period' + (ucPeriods !== 1 ? 's' : '') +
+          ' · ' + (atxPeriods > 0 ? atxPeriods : '—') + ' ATX shift period' + (atxPeriods !== 1 ? 's' : '') +
+          ' · Peak day = ' + Math.round(peak * 100) + '% of weekly volume (' + fmtFte(peakMult) + '× avg day)';
+      }
+
+      STAFFING_ASSAYS.forEach(function(a) {
+        // Assay header row
+        var hdr = document.createElement('tr');
+        hdr.className = 'staffing-assay-row';
+        hdr.innerHTML = '<td colspan="7">' + a.assay + '</td>';
+        tbody.appendChild(hdr);
+
+        a.steps.forEach(function(step) {
+          var ucInput  = document.getElementById('fte-uc-'  + step.id);
+          var atxInput = document.getElementById('fte-atx-' + step.id);
+          if (!ucInput || !atxInput) return;
+
+          var ucCur  = parseFloat(ucInput.value)  || 0;
+          var atxCur = parseFloat(atxInput.value) || 0;
+
+          var ucNeeded  = ucPeriods  > 0 ? ceilHalf(ucCur  * peakMult / ucPeriods)  : 0;
+          var atxNeeded = atxPeriods > 0 ? ceilHalf(atxCur * peakMult / atxPeriods) : 0;
+
+          var ucGap  = parseFloat((ucNeeded  - ucCur).toFixed(1));
+          var atxGap = parseFloat((atxNeeded - atxCur).toFixed(1));
+
+          var ucGapCls  = ucGap  <= 0 ? 'fte-ok'  : (ucGap  <= 0.5 ? 'fte-warn' : 'fte-alert');
+          var atxGapCls = atxGap <= 0 ? 'fte-ok'  : (atxGap <= 0.5 ? 'fte-warn' : 'fte-alert');
+          var ucGapStr  = ucGap  <= 0 ? '✓' : '+' + fmtFte(ucGap);
+          var atxGapStr = atxGap <= 0 ? '✓' : (atxPeriods > 0 ? '+' + fmtFte(atxGap) : '—');
+
+          var tr = document.createElement('tr');
+          tr.innerHTML =
+            '<td>' + step.name + '</td>' +
+            '<td>' + fmtFte(ucCur) + '</td>' +
+            '<td class="metric-highlight">' + fmtFte(ucNeeded) + '</td>' +
+            '<td class="' + ucGapCls + '">' + ucGapStr + '</td>' +
+            '<td class="fte-site-divider">' + fmtFte(atxCur) + '</td>' +
+            '<td class="metric-highlight">' + (atxPeriods > 0 ? fmtFte(atxNeeded) : '—') + '</td>' +
+            '<td class="' + atxGapCls + '">' + atxGapStr + '</td>';
+          tbody.appendChild(tr);
+        });
+      });
+    }
+
+    // Init
+    renderStaffingFteInputs();
+    addYear(2026);
+    updateRatioDisplay();
+    updateSgpDisplay();
+    updateSmaDisplay();
+    updateFraxDisplay();
+    updateMlpaDisplay();
+    updateSiteSplit();
+    updatePeakDisplay();
+    calculateStaffing();
+  </script>
+
+</body>
+</html>

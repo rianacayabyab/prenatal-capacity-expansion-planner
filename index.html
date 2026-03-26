@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BTO Flavor Town 🍦</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: #f5f8fc;
+      color: #2f3d50;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 400;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    header {
+      background: linear-gradient(160deg, #eaf4fb 0%, #d6ecf7 60%, #cce6f5 100%);
+      text-align: center;
+      padding: 3rem 1rem 2.5rem;
+      border-bottom: 1px solid #b3d9ef;
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: "— small-batch. thoughtfully made. —";
+      position: absolute;
+      top: 14px;
+      left: 0;
+      right: 0;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: #29abe2;
+      opacity: 0.75;
+    }
+
+    .header-logo {
+      display: block;
+      margin: 0 auto 1.25rem;
+      height: 48px;
+      width: auto;
+    }
+
+    header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      font-weight: 700;
+      color: #2f3d50;
+      letter-spacing: -0.01em;
+      margin-bottom: 0.6rem;
+    }
+
+    header p.tagline {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 1.15rem;
+      color: #1e8bbf;
+      font-weight: 400;
+    }
+
+    /* Nav */
+    nav {
+      background: #2f3d50;
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+      padding: 1rem 1rem;
+      flex-wrap: wrap;
+    }
+
+    nav a {
+      color: #a8d8ef;
+      text-decoration: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    nav a:hover { color: #fff; }
+
+    /* Sections */
+    section {
+      max-width: 860px;
+      margin: 4rem auto;
+      padding: 0 1.5rem;
+    }
+
+    section h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 600;
+      color: #2f3d50;
+      text-align: center;
+      margin-bottom: 0.4rem;
+    }
+
+    .section-sub {
+      text-align: center;
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #29abe2;
+      margin-bottom: 2rem;
+    }
+
+    /* Menu */
+    .flavor-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .flavor-card {
+      background: #fff;
+      border: 1px solid #c5e0f0;
+      border-radius: 12px;
+      overflow: hidden;
+      transition: box-shadow 0.25s, border-color 0.25s;
+    }
+
+    .flavor-card:hover {
+      box-shadow: 0 4px 20px rgba(47,61,80,0.08);
+      border-color: #29abe2;
+    }
+
+    .flavor-toggle {
+      width: 100%;
+      background: none;
+      border: none;
+      padding: 1.2rem 1.6rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #2f3d50;
+      text-align: left;
+    }
+
+    .flavor-toggle:hover { background: #f0f7fc; }
+
+    .flavor-toggle .emoji { font-size: 1.3rem; margin-right: 0.75rem; }
+
+    .flavor-toggle .arrow {
+      font-size: 0.75rem;
+      transition: transform 0.3s;
+      color: #29abe2;
+      flex-shrink: 0;
+    }
+
+    .flavor-card.open .arrow { transform: rotate(180deg); }
+
+    .flavor-body {
+      display: none;
+      padding: 0 1.6rem 1.6rem;
+      border-top: 1px solid #deeef8;
+    }
+
+    .flavor-card.open .flavor-body { display: flex; gap: 1.5rem; align-items: flex-start; flex-wrap: wrap; }
+
+    .flavor-scoop {
+      font-size: 5rem;
+      line-height: 1;
+      flex-shrink: 0;
+      padding-top: 1rem;
+    }
+
+    .flavor-info { flex: 1; min-width: 200px; padding-top: 1rem; }
+
+    .flavor-info h3 {
+      font-family: 'Playfair Display', serif;
+      color: #2f3d50;
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .flavor-info p {
+      color: #4a5568;
+      line-height: 1.7;
+      font-size: 0.95rem;
+      font-weight: 300;
+    }
+
+    .flavor-tags {
+      margin-top: 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .tag {
+      background: transparent;
+      color: #1e8bbf;
+      border: 1px solid #29abe2;
+      border-radius: 20px;
+      padding: 0.2rem 0.85rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+    }
+
+    /* Locations */
+    .locations-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .location-card {
+      background: #fff;
+      border: 1px solid #c5e0f0;
+      border-radius: 12px;
+      padding: 1.75rem 1.5rem;
+      text-align: center;
+      transition: box-shadow 0.25s;
+    }
+
+    .location-card:hover {
+      box-shadow: 0 4px 20px rgba(47,61,80,0.08);
+    }
+
+    .location-card .loc-icon { font-size: 2rem; margin-bottom: 0.75rem; }
+
+    .location-card h3 {
+      font-family: 'Playfair Display', serif;
+      color: #2f3d50;
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .location-card p {
+      color: #4a5568;
+      font-size: 0.9rem;
+      line-height: 1.7;
+      font-weight: 300;
+    }
+
+    .hours-label {
+      display: inline-block;
+      margin-top: 0.9rem;
+      background: transparent;
+      color: #1e8bbf;
+      border: 1px solid #29abe2;
+      border-radius: 20px;
+      padding: 0.25rem 1rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 2.5rem 1rem;
+      background: #2f3d50;
+      color: #a8d8ef;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-top: 4rem;
+    }
+
+    footer p { margin-bottom: 0.3rem; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <img src="logo.svg" alt="Billion To One" class="header-logo" />
+    <h1>🍦 BTO Flavor Town 🍦</h1>
+    <p class="tagline">Welcome to BTO's Flavor Town! Where every scoop is a trip worth taking.</p>
+  </header>
+
+  <nav>
+    <a href="#menu">Our Flavors</a>
+    <a href="#locations">Locations & Hours</a>
+    <a href="capacity.html">Capacity Model</a>
+  </nav>
+
+  <!-- Locations -->
+  <section id="locations">
+    <h2>Find Us</h2>
+    <p class="section-sub">three locations, one obsession</p>
+    <div class="locations-grid">
+
+      <div class="location-card">
+        <div class="loc-icon">🌉</div>
+        <h3>Menlo Park, CA</h3>
+        <p>1 Hacker Way<br />Menlo Park, CA 94025</p>
+        <span class="hours-label">Mon–Sun: 11am – 10pm</span>
+      </div>
+
+      <div class="location-card">
+        <div class="loc-icon">🌁</div>
+        <h3>Union City, CA</h3>
+        <p>500 Decoto Rd<br />Union City, CA 94587</p>
+        <span class="hours-label">Mon–Sun: 11am – 10pm</span>
+      </div>
+
+      <div class="location-card">
+        <div class="loc-icon">🤠</div>
+        <h3>Austin, TX</h3>
+        <p>6th & Congress Ave<br />Austin, TX 78701</p>
+        <span class="hours-label">Mon–Sun: 12pm – 11pm</span>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Menu -->
+  <section id="menu">
+    <h2>Our Flavors</h2>
+    <p class="section-sub">click any flavor to explore</p>
+    <div class="flavor-list">
+
+      <div class="flavor-card">
+        <button class="flavor-toggle" onclick="toggleFlavor(this)">
+          <span><span class="emoji">🍒</span> Carrier Cherry Garcia</span>
+          <span class="arrow">▼</span>
+        </button>
+        <div class="flavor-body">
+          <div class="flavor-scoop">🍦</div>
+          <div class="flavor-info">
+            <h3>Carrier Cherry Garcia</h3>
+            <p>Our most popular scoop — sweet, reliable, and hidden with a surprise in every bite. Just like carrier screening, most people look perfectly fine on the outside, but this flavor reveals what's quietly tucked away in the mix. Two scoops recommended for couples planning a family.</p>
+            <div class="flavor-tags">
+              <span class="tag">Carrier screening</span>
+              <span class="tag">Autosomal recessive</span>
+              <span class="tag">Expanded panel</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flavor-card">
+        <button class="flavor-toggle" onclick="toggleFlavor(this)">
+          <span><span class="emoji">🧬</span> Aneuploidy Almond Mocha Fudge</span>
+          <span class="arrow">▼</span>
+        </button>
+        <div class="flavor-body">
+          <div class="flavor-scoop">🍨</div>
+          <div class="flavor-info">
+            <h3>Aneuploidy Almond Mocha Fudge</h3>
+            <p>Rich, complex, and occasionally comes with one too many layers — or one too few. This bold mocha fudge swirl represents the full chromosomal picture: sometimes you find an extra, sometimes one's missing, and the result is always worth knowing. Dense, nuanced, and never boring.</p>
+            <div class="flavor-tags">
+              <span class="tag">Chromosomal</span>
+              <span class="tag">Copy number</span>
+              <span class="tag">Trisomy & monosomy</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flavor-card">
+        <button class="flavor-toggle" onclick="toggleFlavor(this)">
+          <span><span class="emoji">🍓</span> sg+ Strawberry Cheesecake</span>
+          <span class="arrow">▼</span>
+        </button>
+        <div class="flavor-body">
+          <div class="flavor-scoop">🍧</div>
+          <div class="flavor-info">
+            <h3>sg+ Strawberry Cheesecake</h3>
+            <p>Bright, precise, and positively glowing — this flavor is all about sensitivity. A silky cheesecake base with sharp strawberry ribbons that hit exactly where they're supposed to. The "+" means there's always a little extra something: more signal, more clarity, more confidence in your result.</p>
+            <div class="flavor-tags">
+              <span class="tag">High sensitivity</span>
+              <span class="tag">Single gene+</span>
+              <span class="tag">Enhanced detection</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flavor-card">
+        <button class="flavor-toggle" onclick="toggleFlavor(this)">
+          <span><span class="emoji">🔥</span> SMA S'mores</span>
+          <span class="arrow">▼</span>
+        </button>
+        <div class="flavor-body">
+          <div class="flavor-scoop">🍦</div>
+          <div class="flavor-info">
+            <h3>SMA S'mores</h3>
+            <p>A layered classic that requires careful assembly — just like SMN1 copy number analysis. Graham cracker crunch, marshmallow fluff, and chocolate fudge come together in just the right proportions. When a layer is missing, you know immediately. Early detection = early treatment = the sweetest possible outcome.</p>
+            <div class="flavor-tags">
+              <span class="tag">Spinal muscular atrophy</span>
+              <span class="tag">SMN1 copy number</span>
+              <span class="tag">Newborn screening</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flavor-card">
+        <button class="flavor-toggle" onclick="toggleFlavor(this)">
+          <span><span class="emoji">✨</span> Fragile X-tra Toffee Crunch</span>
+          <span class="arrow">▼</span>
+        </button>
+        <div class="flavor-body">
+          <div class="flavor-scoop">🍨</div>
+          <div class="flavor-info">
+            <h3>Fragile X-tra Toffee Crunch</h3>
+            <p>This one's deceptively complex — buttery toffee with an unexpected crunch that keeps going and going. Much like FMR1 CGG repeat expansions, the longer the repeat, the more intense the experience. Premutation or full mutation, this flavor always makes an impression. X-tra special, for real.</p>
+            <div class="flavor-tags">
+              <span class="tag">Fragile X syndrome</span>
+              <span class="tag">CGG repeat expansion</span>
+              <span class="tag">FMR1</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flavor-card">
+        <button class="flavor-toggle" onclick="toggleFlavor(this)">
+          <span><span class="emoji">🎨</span> Sanger Spumoni</span>
+          <span class="arrow">▼</span>
+        </button>
+        <div class="flavor-body">
+          <div class="flavor-scoop">🍧</div>
+          <div class="flavor-info">
+            <h3>Sanger Spumoni</h3>
+            <p>The original. The gold standard. Three distinct layers — pistacchio, cherry, chocolate — each one read in perfect sequence, base by base. Sanger sequencing has been around since the '70s and it still holds up. This flavor is for the purists who trust the classics to confirm what everyone else detected first.</p>
+            <div class="flavor-tags">
+              <span class="tag">Gold standard</span>
+              <span class="tag">Confirmatory sequencing</span>
+              <span class="tag">Single variant</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flavor-card">
+        <button class="flavor-toggle" onclick="toggleFlavor(this)">
+          <span><span class="emoji">🍃</span> MLPA Mint Chocolate Chip</span>
+          <span class="arrow">▼</span>
+        </button>
+        <div class="flavor-body">
+          <div class="flavor-scoop">🍦</div>
+          <div class="flavor-info">
+            <h3>MLPA Mint Chocolate Chip</h3>
+            <p>Cool, methodical, and surprisingly powerful. MLPA probes multiple loci in a single reaction — just like how each chocolate chip represents a targeted region, distributed precisely throughout the base. Great for detecting deletions and duplications that other methods might miss. Refreshingly thorough.</p>
+            <div class="flavor-tags">
+              <span class="tag">Multiplex ligation</span>
+              <span class="tag">Deletion/duplication</span>
+              <span class="tag">Probe-based</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <footer>
+    <p>BTO Flavor Town &mdash; Life's too short for bad ice cream</p>
+  </footer>
+
+  <!-- btocities webring -->
+  <div id="webring" style="text-align:center; padding:2rem 1rem; margin-top:3rem; border-top:1px solid #ccc; font-family:monospace; font-size:0.9rem;"></div>
+  <script>
+  (function() {
+    var el = document.getElementById('webring');
+    fetch('/webring.json')
+      .then(function(r) { return r.json(); })
+      .then(function(sites) {
+        var path = location.pathname.replace(/\//g, '');
+        var i = sites.indexOf(path);
+        if (i === -1) return;
+        var prev = sites[(i - 1 + sites.length) % sites.length];
+        var next = sites[(i + 1) % sites.length];
+        var prevLink = document.createElement('a');
+        prevLink.href = '/' + prev + '/';
+        prevLink.textContent = '\u2190 ' + prev;
+        var hub = document.createElement('a');
+        hub.href = '/';
+        hub.textContent = 'btocities webring';
+        var nextLink = document.createElement('a');
+        nextLink.href = '/' + next + '/';
+        nextLink.textContent = next + ' \u2192';
+        el.appendChild(prevLink);
+        el.appendChild(document.createTextNode(' \u2022 '));
+        el.appendChild(hub);
+        el.appendChild(document.createTextNode(' \u2022 '));
+        el.appendChild(nextLink);
+      })
+      .catch(function() {});
+  })();
+  </script>
+
+  <script>
+    function toggleFlavor(btn) {
+      var card = btn.closest('.flavor-card');
+      card.classList.toggle('open');
+    }
+  </script>
+
+</body>
+</html>
